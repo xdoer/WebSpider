@@ -392,32 +392,12 @@ ejs模板页面
     </ul>
 ```
 
-## 接口调用DEMO
-[WebSplider DEMO](http://demo.docmobile.cn)
-
 
 ## 示例配置参考
 
 > * [WebSplider参考配置](https://docmobile.cn/artical_detiail/luckyhh/1528369921460)
 
 > * [基于WebSplider的在线新闻模块开发](https://www.docmobile.cn/artical_detiail/luckyhh/1528989508215)
-
-## WebSplider镜像
-```
-https://splider.herokuapp.com
-```
-对该项目进行前后端分离后的前端面板部分，使用Vue.js框架，使用vue-cli构建应用。
-
-后端API地址
-```
-https://websplider.herokuapp.com
-```
-
-该镜像采用在线的mlab数据库，数据库数据与我服务器中的数据保持单向同步。(我的服务器中的数据会被同步到mlab中，mlab中原有数据不变)
-
-优点:该镜像的数据存储在mlab数据库，所以安全更有保障。支持抓取国外一些网站的数据。
-
-缺点:响应速度略慢。
 
 
 ## 更新日志
@@ -426,7 +406,6 @@ https://websplider.herokuapp.com
 
 ## 注意
 ```
-http://splider.docmobile.cn
 https://splider.herokuapp.com/
 ```
 均为预览地址，不推荐使用到实际项目中。你可以下载该项目部署到自己的服务器上。
