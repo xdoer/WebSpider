@@ -1,0 +1,32 @@
+{
+  "name": "websplider",
+  "version": "1.2.1",
+  "description": "WebSplider , a online crawler which can be configured on the web page, and the server returns crawling results.",
+  "main": "WebSplider.js",
+  "scripts": {
+    "start": "node WebSplider.js"
+  },
+  "keywords": [
+    "splider",
+    "node",
+    "superagent",
+    "cheerio",
+    "crawler"
+  ],
+  "author": "luckyhh <gotoanything@foxmail.com>",
+  "homepage": "https://github.com/LuckyHH/WebSplider/blob/master/README.md",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.6.1",
+    "axios": "^0.18.0",
+    "cheerio": "^1.0.0-rc.2",
+    "koa": "^2.5.1",
+    "koa-session": "^5.8.1",
+    "koa-static": "^4.0.3",
+    "monk": "^6.0.6",
+    "node-schedule": "^1.3.0",
+    "superagent": "^3.8.3",
+    "superagent-charset": "^1.2.0",
+    "superagent-proxy": "^1.0.3"
+  }
+}
