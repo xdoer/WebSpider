@@ -118,9 +118,6 @@ CNode的分页网址
 
 这里为了描述方便，将标签选择器分为两种，一种是a标签选择器与数据标签选择器。(当然，如果你想要的数据在a标签中，那么a标签选择器就是数据标签选择器)
 
-原理图:
-![原理](https://www.docmobile.cn/upload/image/plain/1017939766378893312.png)
-
 > 当抓取深度为1，则一级选择器中填写数据选择器即可。
 
 > 当抓取深度为2，则一级选择器中填写到达第二层页面的a标签选择器，二级选择器填写数据标签选择器。
@@ -397,18 +394,18 @@ ejs模板页面
 
 > * [WebSplider参考配置](https://docmobile.cn/artical_detiail/luckyhh/1528369921460)
 
-> * [基于WebSplider的在线新闻模块开发](https://www.docmobile.cn/artical_detiail/luckyhh/1528989508215)
+> * [基于WebSplider的在线新闻模块开发](https://docmobile.cn/artical_detiail/luckyhh/1528989508215)
 
 
 ## 更新日志
 
-[WebSplider更新日志](https://www.docmobile.cn/artical_detiail/luckyhh/1530767352093)
+[WebSplider更新日志](https://docmobile.cn/artical_detiail/luckyhh/1530767352093)
 
 ## 注意
 ```
 https://splider.herokuapp.com/
 ```
-均为预览地址，不推荐使用到实际项目中。你可以下载该项目部署到自己的服务器上。
+为预览地址，不推荐使用到实际项目中。你可以下载该项目部署到自己的服务器上。
 
 ## TODO
 - [x] 对GBK网页格式的抓取支持
