@@ -1,7 +1,7 @@
 /**
  * 爬虫配置
- * DELAY 为每次请求的间隔时间
- * CONCURRENT 每次请求的链接个数
+ * DELAY 为每次请求的间隔时间,值建议为0-30毫秒,当值为0抓不到数据时，再往大设置该值
+ * CONCURRENT 每次请求的链接个数。
  */
 const UserAgent = [
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36(KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36',
@@ -20,7 +20,7 @@ const UserAgent = [
 ]
 
 module.exports = {
-  DELAY: 1000,
+  DELAY: 0,
   CONCURRENT: 20,
   HEADER: {
     'User-Agent': UserAgent[Math.floor(Math.random() * UserAgent.length + 1) - 1]
