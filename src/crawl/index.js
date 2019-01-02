@@ -1,5 +1,6 @@
 /**
  * 爬虫主控函数模块
+ * 控制爬虫运行流程
  */
 const mapReqUrl = require('./mapReqUrl')
 const { _debug, _splice } = require('../utils')
