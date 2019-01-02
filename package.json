@@ -1,32 +1,36 @@
 {
-  "name": "websplider",
-  "version": "1.2.1",
-  "description": "WebSplider , a online crawler which can be configured on the web page, and the server returns crawling results.",
-  "main": "WebSplider.js",
+  "name": "crawl",
+  "version": "2.0.0",
+  "description": "a online web crawl",
+  "private": true,
   "scripts": {
-    "start": "node WebSplider.js"
+    "start": "node index.js"
   },
   "keywords": [
-    "splider",
-    "node",
-    "superagent",
-    "cheerio",
-    "crawler"
+    "crawl"
   ],
-  "author": "luckyhh <gotoanything@foxmail.com>",
-  "homepage": "https://github.com/LuckyHH/WebSplider/blob/master/README.md",
+  "author": "韩前进",
   "license": "MIT",
   "dependencies": {
     "async": "^2.6.1",
-    "axios": "^0.18.0",
     "cheerio": "^1.0.0-rc.2",
-    "koa": "^2.5.1",
-    "koa-session": "^5.8.1",
-    "koa-static": "^4.0.3",
+    "koa": "^2.6.2",
+    "koa-router": "^7.4.0",
+    "koa-session": "^5.10.0",
+    "koa-static": "^5.0.0",
     "monk": "^6.0.6",
-    "node-schedule": "^1.3.0",
-    "superagent": "^3.8.3",
+    "superagent": "^4.0.0",
     "superagent-charset": "^1.2.0",
-    "superagent-proxy": "^1.0.3"
+    "superagent-proxy": "^2.0.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^5.10.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-html": "^5.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0"
   }
 }
