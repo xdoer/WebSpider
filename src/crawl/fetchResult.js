@@ -16,7 +16,7 @@ require('superagent-proxy')(superagent)
 module.exports = ({ url, tags, tagNum, depth, form, charset, proxies, fn }) => {
   const bound = (err, res) => {
     if (err) {
-      _debug(`${time()} 请求出错 ${err}`, true)
+      _debug(`请求出错 ${err}`, true)
     } else {
       // 保存抓取结果
       let result = []
@@ -60,7 +60,7 @@ module.exports = ({ url, tags, tagNum, depth, form, charset, proxies, fn }) => {
               } catch (e) {
                 state = false
                 errMsg = e.toString()
-                _debug(` 属性选择器解析失败，失败详情 ${e}`, true)
+                _debug(`属性选择器解析失败，失败详情 ${e}`, true)
               }
             })
             result.push(tempResult)
@@ -72,7 +72,7 @@ module.exports = ({ url, tags, tagNum, depth, form, charset, proxies, fn }) => {
             } catch (e) {
               state = false
               errMsg = `中间级的标签选择器应为a标签选择器，以使得程序顺利解析到下一级页面。`
-              _debug(`中间页面的a标签选择器解析失败 ， 错误详情:${e}`)
+              _debug(`中间页面的a标签选择器解析失败 ， 错误详情:${e}`, true)
             }
           }
         })
