@@ -4,12 +4,12 @@
   "description": "a online web crawl",
   "private": true,
   "scripts": {
-    "start": "node index.js"
+    "start": "node src/index.js"
   },
   "keywords": [
     "crawl"
   ],
-  "author": "韩前进",
+  "author": "Thomas Han",
   "license": "MIT",
   "dependencies": {
     "async": "^2.6.1",
