@@ -1,1 +1,1 @@
-web: node WebSplider.js
+web: node ./src/index.js
