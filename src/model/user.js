@@ -13,8 +13,8 @@ class User {
    * @param {string} name - 用户姓名
    * @param {string} password - 用户密码
    */
-  constructor ({ name, password }) {
-    this.uid = Date.now()
+  constructor ({ name, password, uid }) {
+    this.uid = uid
     this.name = name
     this.password = password
   }
@@ -29,20 +29,83 @@ class User {
       password: this.password
     }
     return collection.insert(user)
-      .then(docs => {
-        return {
-          state: true,
-          data: docs,
-          msg: '配置保存成功'
-        }
-      }).catch((err) => {
-        return {
-          state: false,
-          data: err,
-          msg: '文章保存失败'
-        }
-      })
+      .then(docs => ({
+        state: true,
+        data: docs,
+        msg: '用户信息配置保存成功'
+      }))
+      .catch(err => ({
+        state: false,
+        data: err,
+        msg: '用户信息配置保存失败'
+      }))
   }
+}
+
+/**
+ * 获取用户信息
+ * @param {object} findFlag - 根据传入的对象进行查找
+ */
+User.get = findFlag => {
+  return collection.find(findFlag)
+    .then(docs => ({
+      state: docs.length > 0,
+      data: docs,
+      msg: docs.length > 0 ? '用户信息获取成功' : '用户信息获取失败'
+    }))
+    .catch(err => ({
+      state: false,
+      data: err,
+      msg: '用户信息获取失败'
+    }))
+}
+
+/**
+ * 更新用户信息
+ * @param {object} findFlag - 根据传入的对象进行查找
+ * @param {object} newValue - 更新查找到相应字段
+ */
+User.update = (findFlag, newValue) => {
+  return collection.update(findFlag, { $set: newValue })
+    .then(docs => ({
+      state: docs.n === 1 && docs.nModified === 1 && docs.ok === 1,
+      data: docs,
+      msg: docs.n === 1 && docs.nModified === 1 && docs.ok === 1 ? '用户信息更新成功' : '用户信息更新失败'
+    }))
+    .catch((err) => ({
+      state: false,
+      data: err,
+      msg: '用户信息更新失败'
+    }))
+}
+
+/**
+ * 删除用户信息
+ * @param {object} findFlag - 根据传入的对象进行查找
+ */
+User.delete = findFlag => {
+  return collection.remove(findFlag)
+    .then(
+    //   docs => ({
+    //   state: docs.n === 1 && docs.ok === 1,
+    //   data: docs,
+    //   msg: docs.n === 1 && docs.ok === 1 ? '用户信息删除成功' : '用户信息删除失败'
+    // })
+
+      /** 删除文档返回格式复杂，要使用其内置对象，不符合书写规范，所以使用再查询的方式判断是否删除成功 */
+      () => {
+        return collection.find(findFlag).then(docs => ({
+          state: docs.length === 0,
+          data: docs.length > 0 ? '用户信息删除失败' : '用户信息删除成功',
+          msg: docs.length > 0 ? '用户信息删除失败' : '用户信息删除成功'
+        })).catch(err => err)
+      }
+    )
+    .catch(err => ({
+      state: false,
+      data: err,
+      msg: '用户信息删除失败'
+    }))
 }
 
 module.exports = User
