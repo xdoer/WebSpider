@@ -3,6 +3,7 @@
  */
 const Koa = require('koa')
 const session = require('koa-session')
+const bodyParser = require('koa-bodyparser')
 const app = new Koa()
 
 const { userRouter, crawlRouter } = require('./router')
@@ -11,6 +12,9 @@ const { PORT, SESSION } = require('./config')
 /** 配置session */
 app.keys = ['some secret']
 app.use(session(SESSION, app))
+
+/** 配置Post解析 */
+app.use(bodyParser())
 
 /**
  * 解决跨域问题
