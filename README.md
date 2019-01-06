@@ -21,20 +21,22 @@ WebSpider
 
 
 ## 本地测试
-1、安装Nodejs，安装MongoDB数据库，搭建环境
+1、安装Nodejs,MongoDB数据库,Git,
 
-2、运行代码
+2、保证程序有读写文件权限(日志文件需要动态写入)
+
+3、运行代码
 ```
 git clone https://github.com/LuckyHH/WebSpider.git
 cd WebSpider
 npm install
-npm start
 ```
 
-3，打开浏览器
-```
-http://localhost:3000
-```
+4、修改配置文件(src/config)
+
+5、根目录下运行`npm start`启动项目
+
+6，打开```http://localhost:3000```
 
 ## 核心代码
 ```
@@ -71,6 +73,52 @@ app.use(async function(ctx, next) {
 app.listen(3000);
 ```
 
+## 目录
+```
+|---docs 模块说明文档
+|    |---crawl.md 爬虫说明
+|---log 日志文件
+|    |---error 错误日志
+|    |---running 运行日志
+|---src 源代码
+|    |---assets 静态资源
+|          |---images 图片
+|          |---favicon.ico 网站icon
+|    |---config 配置
+|          |---index,js 配置项出口
+|          |---crawl.js 爬虫相关配置项
+|          |---db.js 数据库配置项
+|          |---proxy.js 代理配置项
+|          |---session.js 会话配置项
+|    |---crawl 爬虫
+|          |---index.js 爬虫主控文件
+|          |---mapReqUrl.js 并发请求
+|          |---fetchResult 爬虫核心
+|          |---proxy.js 获取代理
+|          |---test.js 测试文件
+|    |---data 数据目录
+|          |---proxies.json 获取到的代理
+|    |---model 数据模型
+|          |---index.js 模型出口
+|          |---user.js 用户模型
+|          |---crawl.js 爬虫模型
+|    |---router Web应用路由
+|          |---utils 路由部分需要的辅助函数
+|                |---verification.js 用户输入验证
+|          |---index.js 路由出口
+|          |---user.js 用户路由
+|          |---crawl.js 爬虫接口路由
+|    |---utils 辅助函数
+|          |---index.js 辅助函数出口
+|          |---debug.js 调试模块
+|          |---filter.js 用户输入过滤模块
+|          |---sha.js 加密模块
+|          |---splice.js 多维数组转化为一维数组
+|          |---time.js 格式化时间
+|          |---uuid.js 获取ID模块
+|    |---index.js 应用入口
+|---static 静态文件文件夹
+```
 
 ## 使用
 
@@ -133,9 +181,9 @@ CNode的分页网址
 二级选择器:`$(".topic .content")`
 
 
-`$(".topic_title a")`是指目标页面中所有类名为topic_title的元素中的a元素
+`$(".topic_title a")`是指目标页面中所有类名为 topic_title 的元素中的a元素
 
-`$(".topic .content")`指的是目标页面中类名为topic的元素下的类名为content的子孙元素
+`$(".topic .content")`指的是目标页面中类名为 topic 的元素下的类名为 content 的子孙元素
 
 填写了两级选择器，说明目标数据在当前页面(即配置页面'目标网址'填写的网址)的下一层，则一级选择器需要指出到达下一层页面的a标签选择器。二级选择器填写的是下一层页面中的数据标签选择器
 
@@ -151,7 +199,7 @@ $(".topic").children('.content')
 
 $(".topic").next().children('.content')
 
-$(".topic").children('.content').next().find('.artical')
+$(".topic").children('.content').next().find('.article')
 ```
 
 更多选择器填写规则，参考[cheerio](https://www.npmjs.com/package/cheerio)。
@@ -188,7 +236,7 @@ $(".topic").children('.content').next().find('.artical')
 
 同样结合上文给出的示例，
 
-如果我要想获得'name'值这一类数据，
+如果我要想获得 'name' 值这一类数据，
 
 那么'选择器'可以这样写
 
@@ -260,26 +308,17 @@ attr()选择的是目标元素标签中的某个属性值。需要填写参数�
 
 ### 8.代理模式
 
-即抓取数据是否需要使用HTTP代理。有3中模式，无代理，西刺代理与自定义代理模式。
+即抓取数据是否需要使用HTTP代理。有2种模式模式，内置代理与自定义代理。
 
-无代理模式使用自己的IP向目标服务器发出请求。
-
-西刺代理模式使用[西刺代理](http://www.xicidaili.com/)可用的代理地址发出请求。
-
-国外代理模式使用[FreeProxyList](https://free-proxy-list.net/)可以的代理地址发出请求。
+内置代理使用[FreeProxyList](https://free-proxy-list.net/)可用的代理地址发出请求。
 
 自定义代理模式需要用户自己填写可用代理。
-
-输入格式如下:
-```
-['http://111.111.111.111:1111','http://111.111.111.111:1111']
-```
 
 注:
 
 (1)自定义代理地址填写不符合正常IP地址的话，系统默认使用无代理模式。
 
-(2)西刺代理模式与国外代理模式响应速度略慢，因为首先HttpProxy要检测可用的代理地址，检测之后WebSpider会随机使用其中的一个代理进行请求，但该代理质量参差不齐，所以可能响应失败。所以当响应失败时，请重新提交。相对来说国外代理模式比西刺代理模式好一些。
+(2)代理质量参差不齐，所以可能响应失败。所以当响应失败时，请重新提交。
 
 (3)[HttpProxy](http://httpproxy.docmobile.cn)提供API支持
 
@@ -287,7 +326,7 @@ attr()选择的是目标元素标签中的某个属性值。需要填写参数�
 
 返回结果中
 
-state表示抓取状态，值为true或者false 
+state表示抓取状态，值为 true 或者 false 
 
 time值为数据的更新时间。
 
@@ -306,7 +345,7 @@ WebSpider 左边栏有近期用户分享的API，贴左边屏幕有个icon，点
 ### 12.数据自动更新机制
 (1)自API生成起，程序每24小时更新一次数据，time值为更新数据的时间(不管数据更新成功或者失败，time值都会更新)
 
-(2)当应用意外崩溃重启，所有API自动更新失效，直到用户重新请求API。当请求API时，程序发现请求时间比数据库保存的数据更新时间大24小时，会调用爬虫程序并响应结果，time值为API请求的时间，此时响应时间稍长，同时程序将重新启动自动更新机制，自动更新该API数据。
+(2)当应用意外崩溃重启，所有API自动更新失效，直到用户重新请求API。当请求API时，程序发现请求时间比数据库保存的数据更新时间大24小时，会调用爬虫程序并响应结果，time 值为API请求的时间，此时响应时间稍长，同时程序将重新启动自动更新机制，自动更新该API数据。
 
 (3)当自动更新机制更新某个API数据时，如果连续5次请求失败，说明目标网站可能闭站，改版，或者封了我服务器的IP，程序将不会再更新该API数据。当用户在数据更新时间(即time值)的24小时后调用API，会调用爬虫程序抓取数据进行响应，此时程序将重新启动定时任务，自动更新数据，如果5次请求失败，就不会再更新数据，在更新时间的24小时后，用户再次调用API，程序调用爬虫程序抓取数据进行响应。。。
 
@@ -315,7 +354,7 @@ WebSpider 左边栏有近期用户分享的API，贴左边屏幕有个icon，点
 
 ### 1.前端调用示例
 
-JSONP的调用方式
+JSONP 的调用方式
 ```
 <script>
     function callback(obj) {
@@ -332,19 +371,16 @@ JSONP的调用方式
 
 
 ### 2.后端调用示例:
-
-
 ```
-
 Node.js后端
 const express = require('express');
 const axios = require("axios");
 const router = express.Router();
 
 router.get('/douban/movie', function(req, res, next) {
-    axios.get("http://splider.docmobile.cn/interface?name=luckyhh&cid=1529046160624").then(ires => {
-        if(ires.data.state){
-            res.render('douban', { title: 'douban', content: ires.data.data });
+    axios.get("http://splider.docmobile.cn/interface?name=luckyhh&cid=1529046160624").then(_res => {
+        if(_res.data.state){
+            res.render('douban', { title: 'douban', content: _res.data.data });
         }else{
             res.send("请求失败");
         }
@@ -405,7 +441,7 @@ ejs模板页面
 ```
 https://splider.herokuapp.com/
 ```
-为预览地址，不推荐使用到实际项目中。你可以下载该项目部署到自己的服务器上。
+为预览地址，不推荐使用到实际项目中。
 
 ## TODO
 - [x] 对GBK网页格式的抓取支持
