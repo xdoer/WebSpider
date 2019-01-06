@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>接口测试文件</title>
+    <script src="https://cdn.bootcss.com/qs/6.6.0/qs.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <button onclick="testPreview()">测试testPreview接口</button>
+</body>
+<script>
+/* eslint-disable */
+function testPreview () {
+    axios.post('http://localhost:3000/crawl/preview', Qs.stringify({
+        "url": 'https://www.thepaper.cn/',
+        "tags": ["$('.news_li').children('h2').children('a')", "$('.newscontent')"],
+        "form": {
+            'title': "$element.children('.news_title').text()",
+            'content': "$element.children('.news_txt').text()"
+        },
+        "depth": 2,
+        "proxyMode": "internal"
+    }))
+}
+</script>
+
+</html>
