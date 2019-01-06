@@ -12,11 +12,13 @@ class User {
    * @constructor 描述用户模型
    * @param {string} name - 用户姓名
    * @param {string} password - 用户密码
+   * @param {string} uid - 传入的用户ID
    */
   constructor ({ name, password, uid }) {
     this.uid = uid
     this.name = name
     this.password = password
+    this.time = Date.now()
   }
 
   /**
@@ -45,9 +47,10 @@ class User {
 /**
  * 获取用户信息
  * @param {object} findFlag - 根据传入的对象进行查找
+ * @param {object} option - 可选的传入参数
  */
-User.get = findFlag => {
-  return collection.find(findFlag)
+User.get = (findFlag, option) => {
+  return collection.find(findFlag, option)
     .then(docs => ({
       state: docs.length > 0,
       data: docs,
