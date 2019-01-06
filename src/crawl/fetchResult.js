@@ -13,83 +13,75 @@ const { CRAWL: { HEADER } } = require('../config')
 require('superagent-charset')(superagent)
 require('superagent-proxy')(superagent)
 
-module.exports = ({ url, tags, tagNum, depth, form, charset, proxies, fn }) => {
+module.exports = async ({ url, tags, tagNum, depth, form, charset, proxy, fn }) => {
   const bound = (err, res) => {
     if (err) {
       _debug(`请求出错 ${err}`, true)
     } else {
-      // 保存抓取结果
-      let result = []
+      let result = [] // 返回的抓取结果
+      let $ = cheerio.load(res.text) // 加载文件
+      let tag = null // 解析后的标签选择器
+      let state = true // fn回调函数返回控制
+      let errMsg = '' // 错误信息
 
-      // 加载要解析的网页
-      let $ = cheerio.load(res.text)
-
-      // 标签选择器
-      let target = null
-
-      // "输出结果"格式中属性选择器解析状态
-      let state = true
-      let errMsg = ''
-
+      // 验证用户输入，放在路由那里
       try {
-        // 将用户输入的标签选择器整合到上下文
-        // 在koa路由那里已经验证过用户输入
+        tag = eval(tags[tagNum])     // eslint-disable-line
+      } catch (e) {
+        _debug(`标签选择器解析失败,失败详情 ${e}`, true)
+        return
+      }
 
-        try {
-          target = eval(tags[tagNum])     // eslint-disable-line
-        } catch (e) {
-          _debug(`用户输入解析失败,失败详情 ${e}`, true)
-        }
-        target.each(function (idx, element) {
-          var $element = $(element)
+      tag.each((idx, element) => {
+        let $element = $(element)
 
-          // num是爬取深度,tag_num是标签选择器数组下标
-          // 当爬取深度等于标签选择器数组下标值，说明此时已经到达目标页面
-          // 否则此时还在中间页面，需要继续解析链接标签选择器获得下一级的URL
-          if (depth === tagNum + 1) {
-            let tempResult = {}
+        // 根据抓取深度与标签下标的关系判断当前是要获取进入下一页的a标签，还是要获取数据
+        if (depth === tagNum + 1) {
+          let tempResult = {}
+          /**
+           * 单纯描述数据其实可以用map数据结构
+           * const _form = new Map(Object.entries(form))
+           * let tempKey = _form.keys()
+           * let tempValue = _form.values()
+           * 参考:http://es6.ruanyifeng.com/#docs/style#Map-%E7%BB%93%E6%9E%84
+           * 不过看起来绕弯弯，不如Object.keys()直接
+           */
 
-            // 将"输出结果"中的键和值分别保存到数组
-            let tempKey = Object.keys(form)
-            let tempValue = Object.values(form)
+          let tempKey = Object.keys(form)
+          let tempValue = Object.values(form)
 
-            // 解析数据
-            tempKey.forEach(function (key, idx) {
-              try {
-                tempResult[key] = eval(tempValue[idx]) // eslint-disable-line
-              } catch (e) {
-                state = false
-                errMsg = e.toString()
-                _debug(`属性选择器解析失败，失败详情 ${e}`, true)
-              }
-            })
-            result.push(tempResult)
-          } else {
+          tempKey.forEach((key, idx) => {
             try {
-              // 通过链接标签选择器获取中间页面的URL
-              let tempResult = new URL($element.attr('href'), url)
-              result.push(tempResult)
+              tempResult[key] = eval(tempValue[idx]) // eslint-disable-line
             } catch (e) {
               state = false
-              errMsg = `中间级的标签选择器应为a标签选择器，以使得程序顺利解析到下一级页面。`
-              _debug(`中间页面的a标签选择器解析失败 ， 错误详情:${e}`, true)
+              errMsg = e.toString()
+              _debug(`属性选择器解析失败，失败详情 ${e}`, true)
             }
+          })
+          result.push(tempResult)
+        } else {
+          try {
+            let href = $element.attr('href')
+            let tempResult = (new URL(href, url)).href
+            result.push(tempResult)
+          } catch (e) {
+            state = false
+            errMsg = `中间级的标签选择器应为a标签选择器，以使得程序顺利解析到下一级页面。`
+            _debug(`中间页面的a标签选择器解析失败,错误详情:${e}`, true)
           }
-        })
-        state ? fn(null, result) : fn(errMsg)
-      } catch (e) {
-        _debug(`标签选择器解析出错，错误详情:${e}`, true)
-        fn(e)
-      }
+        }
+      })
+      state ? fn(null, result) : fn(errMsg)
     }
   }
 
-  if (proxies.length > 0) {
-    superagent.get(url).set(HEADER).proxy(proxies).charset(charset).end((err, res) => {
+  if (proxy) {
+    superagent.get(url).set(HEADER).proxy(proxy).charset(charset).buffer(true).end((err, res) => {
       bound(err, res)
     })
   } else {
-    superagent.get(url).set(HEADER).charset(charset).end((err, res) => {
+    superagent.get(url).set(HEADER).charset(charset).buffer(true).end((err, res) => {
       bound(err, res)
     })
   }
