@@ -13,7 +13,7 @@ router
    * @param {string} name - 用户名
    * @param {string} password - 密码
    */
-  .post('/login', async ctx => {
+  .post('/user/login', async ctx => {
     const { name, password } = ctx.request.body
     if (!name || !password || name.toString().length < 3 || password.toString().length < 6) {
       ctx.body = {
@@ -54,7 +54,7 @@ router
    * @param {string} password - 密码
    * @param {string} repeatPassword - 重复密码
    */
-  .post('/register', async ctx => {
+  .post('/user/register', async ctx => {
     const { name, password, repeatPassword } = ctx.request.body
     /** 检测出参数有误，直接返回 */
     if (!name || !password || !repeatPassword || password !== repeatPassword || password.toString().length < 6 || name.toString().length < 3) {
@@ -90,6 +90,27 @@ router
         _debug(`用户 ${name} 注册失败, 失败详情 ${user.data}`, true)
       }
       ctx.body = user
+    }
+  })
+  /**
+   * 用户注销账号操作
+   */
+  .get('/user/logout', async ctx => {
+    ctx.session = null
+    ctx.body = { state: true, data: '用户注销成功', msg: '用户注销成功' }
+  })
+  /**
+   * 删除账号操作
+   * 删除账号需要验证用户名与密码
+   */
+  .post('/user/delete', async ctx => {
+    const { name, password } = ctx.body.request
+    if (ctx.session.user.name !== name) return { state: false, data: '验证失败', msg: '验证失败' }
+    const users = await User.get({ name })
+    if (users[0].password === _crypto(password)) {
+      ctx.body = await User.delete({ name })
+    } else {
+      return { state: false, data: '验证失败', msg: '验证失败' }
     }
   })
 
