@@ -12,9 +12,10 @@ const collection = db.get('crawl')
  */
 class Crawl {
   /** 构建爬虫模型 */
-  constructor ({ cid }) {
+  constructor ({ cid, uid, config }) {
     this.cid = cid
-    this.config = {}
+    this.uid = uid
+    this.config = config
     this.result = {}
     this.time = Date.now()
   }
@@ -23,6 +24,7 @@ class Crawl {
   save () {
     const crawl = {
       cid: this.cid,
+      uid: this.uid,
       config: this.config,
       result: this.result
     }
