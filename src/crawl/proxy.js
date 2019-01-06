@@ -17,7 +17,7 @@ const writeProxies = async () => {
   // 初始化写入数据
   const content = { proxies: [] }
 
-  // 整合直接在配置文件中的代理
+  // 整合直接写在配置文件中的代理
   content.proxies = proxy ? content.proxies.concat(proxy) : content.proxies
 
   // 存在代理接口，则进行请求
