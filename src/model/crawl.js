@@ -12,10 +12,11 @@ const collection = db.get('crawl')
  */
 class Crawl {
   /** 构建爬虫模型 */
-  constructor () {
-    this.cid = Date.now()
+  constructor ({ cid }) {
+    this.cid = cid
     this.config = {}
     this.result = {}
+    this.time = Date.now()
   }
 
   /** 保存爬虫配置 */
@@ -42,9 +43,10 @@ class Crawl {
 /**
  * 获取用户信息
  * @param {object} findFlag - 根据传入的对象进行查找
+ * @param {object} option - 可选的传入参数
  */
-Crawl.get = findFlag => {
-  return collection.find(findFlag)
+Crawl.get = (findFlag, option) => {
+  return collection.find(findFlag, option)
     .then(docs => ({
       state: docs.length > 0,
       data: docs,
