@@ -34,9 +34,9 @@ const _note = {
  * content为要输出的内容
  * err参数为错误输出标志位
  */
-module.exports = (content, err) => {
+module.exports = (content, err = false) => {
   if (DEBUG) {
-    console.log(`${_time()} content`)
+    console.log(`${_time()} ${content}`)
   }
   if (LOG) {
     if (err) {
