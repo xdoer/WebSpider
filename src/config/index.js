@@ -12,7 +12,7 @@
 module.exports = {
   PORT: 3000,
   DEBUG: true,
-  LOG: true,
+  LOG: false,
   DB: require('./db'),
   SESSION: require('./session'),
   PROXY: require('./proxy'),
