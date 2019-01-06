@@ -1,6 +1,5 @@
 /**
  * 过滤用户输入
- * 用户输入中不能带有js中关键字信息
  */
 
 const regList = [
@@ -14,12 +13,12 @@ const regList = [
   /console/i,
   /eval/i,
   /new\s/i,
-  /Function/i
+  /Function/i,
+  /superagent/i,
+  /cheerio/i
 ]
 
-/**
- * @returns Function 模块返回一个函数
- * 函数返回 true 或 false
- * 当传入的参数被正则列表中匹配到，则返回true，说明用户可能有恶意
- */
-module.exports = m => regList.some(n => n.test(m))
+module.exports = {
+  filterEval: m => regList.some(n => n.test(m)),
+  filterUrl: m => /^http:\/\/((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?):\d{2,5}/g.test(m)
+}
