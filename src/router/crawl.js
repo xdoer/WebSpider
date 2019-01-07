@@ -3,7 +3,7 @@
  */
 
 const Router = require('koa-router')
-const { Crawl } = require('../model')
+const { Crawl, User } = require('../model')
 const { _debug, _uuid } = require('../utils')
 const fetch = require('../crawl')
 const getProxies = require('../crawl/proxy')
@@ -38,16 +38,18 @@ router
    * @param {string} mode 抓取模式(普通模式与分页模式)
    * @param {string} start 分页模式下起始页码
    * @param {string} end 分页模式下终止页码
+   * @param {string} interval 更新数据时间间隔
    */
   .post('/crawl/preview', async ctx => {
     // 前端使用 axios 进行请求，使用 qs 模块格式化 post 请求数据，数字会已字符串进行传递，JSON数据会变成对象
-    let { url, tags, depth = '1', form, charset = 'utf-8', proxyMode = 'none', proxies = [], mode = 'plain', start = '0', end = '0' } = ctx.request.body
+    let { url, tags, depth = '1', form, charset = 'utf-8', proxyMode = 'none', proxies = [], mode = 'plain', start = '0', end = '0', interval = '0' } = ctx.request.body
 
     // 参数验证
-    const dataState = verification({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end })
+    const dataState = verification({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end, interval })
     if (!dataState.state) {
       ctx.body = {
         state: false,
+        time: new Date(),
         data: dataState.msg,
         msg: '参数验证失败'
       }
@@ -78,31 +80,25 @@ router
     const res = await fetch({ urls, tags, depth: Number.parseInt(depth), form, charset, proxy })
     ctx.body = {
       state: res.state,
+      time: new Date(),
       data: res.data,
       msg: res.state ? '抓取成功' : '抓取失败'
     }
   })
   /**
    * 保存用户提交的爬虫配置
-   * 参数列表如上一个路由，逻辑相同，只不过最后是将数据存到数据库而不是调用爬虫函数
+   * 其他参数列表如上一个路由
    */
   .post('/crawl/save', async ctx => {
     // 首先判断用户登录状态
-    if (!ctx.session.user) return { state: false, data: '未登录', msg: '未登录' }
+    if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '未登录', msg: '未登录' }; return }
 
     // 前端使用 axios 进行请求，使用 qs 模块格式化 post 请求数据，数字会已字符串进行传递，JSON数据会变成对象
-    let { url, tags, depth = '1', form, charset = 'utf-8', proxyMode = 'none', proxies = [], mode = 'plain', start = '0', end = '0' } = ctx.request.body
+    let { url, tags, depth = '1', form, charset = 'utf-8', proxyMode = 'none', proxies = [], mode = 'plain', start = '0', end = '0', interval = '0' } = ctx.request.body
 
     // 参数验证
-    const dataState = verification({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end })
-    if (!dataState.state) {
-      ctx.body = {
-        state: false,
-        data: dataState.msg,
-        msg: '参数验证失败'
-      }
-      return
-    }
+    const dataState = verification({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end, interval })
+    if (!dataState.state) { ctx.body = { state: false, time: new Date(), data: dataState.msg, msg: '参数验证失败' }; return }
 
     /**
      * 分页请求模式下,构造请求链接数组
@@ -112,33 +108,63 @@ router
     end = Number.parseInt(end)
     let urls = mode === 'pagination' ? (new Array(end - start)).fill(url).map(n => n.replace(/\*/i, start++)) : [url]
 
-    /**
-     * 代理模式
-     * 内置代理模式,用户配置的代理,不使用代理
-     */
-    let proxy
-    if (proxyMode === 'internal') {
-      let _proxies = await getProxies()
-      proxy = _proxies[Math.floor(Math.random() * _proxies.length + 1) - 1]
-    } else if (proxyMode === 'own') {
-      proxy = proxies[Math.floor(Math.random() * proxies.length + 1) - 1]
-    }
-
     // 实例化一个爬虫模型对象
     const crawlConfig = new Crawl({
       uid: ctx.session.user.uid,
       cid: _uuid(),
-      config: { urls, tags, depth: Number.parseInt(depth), form, charset, proxy }
+      interval: Number.parseInt(interval),
+      config: { urls, tags, depth: Number.parseInt(depth), form, charset, proxyMode, proxies }
     })
-    ctx.body = await crawlConfig.save()
+    const res = await crawlConfig.save()
+    ctx.body = Object.assign(res, { time: new Date() })
   })
   /**
    * 获取API函数
    * 提交参数有爬虫配置id
    * 这里还涉及到数据更新的问题
+   * API调用统计
    */
   .get('/crawl/api', async ctx => {
+    const { user, cid } = ctx.request.query
+    if (!user || !cid) { ctx.body = { state: false, time: new Date(), data: '参数不完整', msg: '请求失败' }; return }
 
+    const _users = await User.get({ name: user }, { fields: { uid: 1 } })
+    const _configs = await Crawl.get({ cid })
+
+    if (!_users.state || !_configs.state) { ctx.body = { state: false, time: new Date(), data: '数据读取出错,请联系站长', msg: '操作失败' }; return }
+    const _user = _users.data[0]
+    const config = _configs.data[0]
+
+    // 链接中的用户 id 和爬虫配置中的用户id不匹配
+    if (config.uid !== _user.uid) { ctx.body = { state: false, time: new Date(), data: '参数错误', msg: '用户名与配置ID不匹配' }; return }
+
+    // 如果没配置更新(即 interval 值为0)
+    if (!config.interval && config.result.value.length > 0) {
+      ctx.body = { state: true, time: new Date(Number.parseInt(config.result.time)), data: config.result.value, msg: '请求成功' }
+    } else {
+      const t = (Date.now() - Number.parseInt(config.result.time)) / (1000 * 60 * 60)
+      // 如果当前API请求时间大于用户配置的更新时间,则调用爬虫
+      if (t > config.interval) {
+        // 处理代理
+        let proxy
+        if (config.proxyMode === 'internal') {
+          let _proxies = await getProxies()
+          proxy = _proxies[Math.floor(Math.random() * _proxies.length + 1) - 1]
+        } else if (config.proxyMode === 'own') {
+          proxy = config.proxies[Math.floor(Math.random() * config.proxies.length + 1) - 1]
+        }
+        // 这里将{proxy: proxy}对象整合到config.config中，爬虫函数那里将解构得到参数
+        const res = await fetch(Object.assign(config.config, { proxy }))
+        ctx.body = { state: res.state, time: new Date(), data: res.data, msg: res.state ? '请求成功' : '请求失败' }
+
+        const m = await Crawl.update({ cid: config.cid }, { result: { time: Date.now(), value: res } })
+        if (!m.state) {
+          _debug('API调用,爬虫结果更新失败', true)
+        }
+      } else {
+        ctx.body = { state: true, time: new Date(Number.parseInt(config.result.time)), data: config.result.value, msg: '请求成功' }
+      }
+    }
   })
 
 module.exports = router
