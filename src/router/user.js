@@ -2,7 +2,7 @@
  * 用户信息路由
  */
 const Router = require('koa-router')
-const { User } = require('../model')
+const { User, Crawl } = require('../model')
 const { _debug, _crypto, _uuid } = require('../utils')
 const router = new Router()
 
@@ -108,7 +108,16 @@ router
     if (ctx.session.user.name !== name) return { state: false, data: '验证失败', msg: '验证失败' }
     const users = await User.get({ name })
     if (users[0].password === _crypto(password)) {
-      ctx.body = await User.delete({ name })
+      const crawl = await Crawl.delete({ uid: users[0].uid })
+      if (crawl.state) {
+        ctx.body = await User.delete({ name })
+      } else {
+        ctx.body = {
+          state: false,
+          data: '相关爬虫配置删除失败,请联系站长',
+          msg: '删除失败'
+        }
+      }
     } else {
       return { state: false, data: '验证失败', msg: '验证失败' }
     }
