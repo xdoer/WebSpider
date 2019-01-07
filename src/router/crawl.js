@@ -77,9 +77,9 @@ router
     // 调用爬虫
     const res = await fetch({ urls, tags, depth: Number.parseInt(depth), form, charset, proxy })
     ctx.body = {
-      state: Boolean(res),
-      data: res,
-      msg: res ? '抓取成功' : '抓取失败'
+      state: res.state,
+      data: res.data,
+      msg: res.state ? '抓取成功' : '抓取失败'
     }
   })
   /**

@@ -25,6 +25,7 @@ module.exports = async ({ urls, tags, depth, form, charset, proxy }) => {
   /**
    * tagNum参数-tags数组下标
    * 内部函数中需要判断当前深度与分析到的标签的个数来决定用不用继续向下分析
+   * 流程中出现错误，catch会捕获到，并且返回false
    * */
   return mapReqUrl({ urls, tags, depth, form, charset, proxy, tagNum: i++ })
     .then(res => {
@@ -33,9 +34,16 @@ module.exports = async ({ urls, tags, depth, form, charset, proxy }) => {
     })
     .then(res => {
       _debug(`主控函数-流程2-执行成功`)
-      return bound({ res, tags, depth, form, charset, proxy, tagNum: i++ })
+      return {
+        state: true,
+        data: bound({ res, tags, depth, form, charset, proxy, tagNum: i++ })
+      }
     })
     .catch(err => {
       _debug(`主控函数-流程执行出错 ${err}`, true)
+      return {
+        state: false,
+        data: err
+      }
     })
 }
