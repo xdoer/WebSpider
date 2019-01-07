@@ -28,7 +28,8 @@ class User {
     const user = {
       uid: this.uid,
       name: this.name,
-      password: this.password
+      password: this.password,
+      time: this.time
     }
     return collection.insert(user)
       .then(docs => ({
