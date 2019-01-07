@@ -21,15 +21,6 @@ const writeFile = (content, _path) => {
   })
 }
 
-const _note = {
-  error (content) {
-    writeFile(content, 'error')
-  },
-  log (content) {
-    writeFile(content, 'running')
-  }
-}
-
 /**
  * content为要输出的内容
  * err参数为错误输出标志位
@@ -40,9 +31,9 @@ module.exports = (content, err = false) => {
   }
   if (LOG) {
     if (err) {
-      _note.error(content)
+      writeFile(content, 'error')
     } else {
-      _note.log(content)
+      writeFile(content, 'running')
     }
   }
 }
