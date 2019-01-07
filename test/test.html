@@ -10,6 +10,7 @@
 </head>
 <body>
     <button onclick="testPreview()">测试testPreview接口</button>
+    <button onclick="testSave()">测试保存配置接口</button>
 </body>
 <script>
 /* eslint-disable */
@@ -22,7 +23,22 @@ function testPreview () {
             'content': "$element.children('.news_txt').text()"
         },
         "depth": 2,
+        "interval": 0,
         "proxyMode": "internal"
+    }))
+}
+
+function testSave() {
+    axios.post('http://localhost:3000/crawl/save', Qs.stringify({
+        "url": 'https://www.thepaper.cn/',
+        "tags": ["$('.news_li').children('h2').children('a')", "$('.newscontent')"],
+        "form": {
+            'title': "$element.children('.news_title').text()",
+            'content': "$element.children('.news_txt').text()"
+        },
+        "depth": 2,
+        "interval": 0,
+        "proxyMode": "internal"        
     }))
 }
 </script>
