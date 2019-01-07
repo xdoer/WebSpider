@@ -9,15 +9,27 @@ const collection = db.get('crawl')
 
 /**
  * 爬虫类
+ * @param {string} cid 当前爬虫配置id
+ * @param {string} uid 用户id
+ * @param {object} config 爬虫配置
+ * @param {boolean} permission 配置权限,权限为true，则可以展示到分享页面
+ * @param {number} interval 爬虫结果更新间隔时间
+ * @param {object} result 爬虫抓取结果,对象内部 time 表示 value 更新时间
+ * @param {string} time 配置创建时间
  */
 class Crawl {
   /** 构建爬虫模型 */
-  constructor ({ cid, uid, config }) {
+  constructor ({ cid, uid, config, interval }) {
     this.cid = cid
     this.uid = uid
     this.config = config
-    this.result = {}
-    this.time = Date.now()
+    this.permission = false
+    this.interval = interval
+    this.result = {
+      time: '' + Date.now(),
+      value: []
+    }
+    this.time = '' + Date.now()
   }
 
   /** 保存爬虫配置 */
@@ -26,6 +38,8 @@ class Crawl {
       cid: this.cid,
       uid: this.uid,
       config: this.config,
+      permission: this.permission,
+      interval: this.interval,
       result: this.result
     }
 
