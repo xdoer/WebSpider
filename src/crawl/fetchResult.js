@@ -17,6 +17,7 @@ module.exports = async ({ url, tags, tagNum, depth, form, charset, proxy, fn }) 
   const bound = (err, res) => {
     if (err) {
       _debug(`请求出错 ${err}`, true)
+      fn(err)
     } else {
       let result = [] // 返回的抓取结果
       let $ = cheerio.load(res.text) // 加载文件
