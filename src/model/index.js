@@ -3,5 +3,6 @@
  */
 module.exports = {
   User: require('./user'),
-  Crawl: require('./crawl')
+  Crawl: require('./crawl'),
+  Statistics: require('./statistics')
 }
