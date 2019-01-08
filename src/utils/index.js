@@ -4,5 +4,6 @@ module.exports = {
   _time: require('./time'),
   _debug: require('./debug'),
   _crypto: require('./sha'),
-  _uuid: require('./uuid')
+  _uuid: require('./uuid'),
+  _statistics: require('./statistics')
 }
