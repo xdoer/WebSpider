@@ -4,7 +4,7 @@
 
 const monk = require('monk')
 const { DB: { url } } = require('../config')
-const { formatTime } = require('../utils')
+const _time= require('../utils/time')
 const db = monk(url)
 const collection = db.get('statistics')
 
@@ -19,11 +19,10 @@ class Statistics {
     this.sid = sid
     this.cid = cid
     this.url = url
-    this.time = time
+    this.time = time.toString()
     this.count = count
   }
   save () {
-
     /**
      * 按年、月、日统计
      */
@@ -45,12 +44,12 @@ class Statistics {
           data:[{
             day,
             // data的长度就是当天的该 API 调用次数
-            data:[formatTime(t)]
+            data:[_time(t)]
           }]
         }]
       }]
     }
-    collection.insert(statistics)
+    return collection.insert(statistics)
       .then(docs => ({
         state: true,
         data: docs,
@@ -109,3 +108,5 @@ Statistics.delete = findFlag => {
       msg: 'API调用统计信息删除失败'
     }))
 }
+
+module.exports = Statistics
