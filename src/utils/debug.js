@@ -30,10 +30,6 @@ module.exports = (content, err = false) => {
     console.log(`${_time()} ${content}`)
   }
   if (LOG) {
-    if (err) {
-      writeFile(content, 'error')
-    } else {
-      writeFile(content, 'running')
-    }
+    err ? writeFile(content, 'error') : writeFile(content, 'running')
   }
 }
