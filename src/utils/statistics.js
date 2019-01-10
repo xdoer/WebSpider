@@ -1,8 +1,9 @@
 const formatTime = require('./time')
+const _uuid = require('./uuid')
 const _debug = require('./debug')
 const { Statistics } = require('../model')
 
-module.exports = async ({ path, cid, time }) => {
+module.exports = async ({ path, cid, time = Date.now() }) => {
   const statistics = await Statistics.get({ url: path })
   if (statistics.state) {
     let { count, history } = statistics.data[0]
@@ -43,22 +44,22 @@ module.exports = async ({ path, cid, time }) => {
       return _year
     })
     flag ? '' : history.push({ year, data: [{ month, data: [{ day, data: [formatTime(t)] }] }] })
-    const res = await Statistics.update({ url: path }, { count: count++, history })
+    const res = await Statistics.update({ url: path }, { count: ++count, history })
     if (!res.state) {
       _debug('统计信息更新出错', true)
     }
+    return res
   } else {
-    const g = (await new Statistics({
-      sid: _uuid(),
-      cid: cid,
-      url: path,
-      time: time,
-      count: 1
-    })).save()
-    if (g.state) {
-      _debug(`API:${path}统计信息初始化初始化成功`)
-    } else {
-      _debug(`API:${path}统计信息初始化初始化失败，失败详情:${g.data}`, true)
-    }
+      const res = await (new Statistics({
+          sid: _uuid(),
+          cid: cid,
+          url: path,
+          time: time.toString(),
+          count: 1
+        })).save()
+      if (!res.state) {
+        _debug(`API初始化失败, 失败详情: ${ res.msg }`, true)
+      }
+      return res
   }
 }
