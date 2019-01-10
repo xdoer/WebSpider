@@ -5,7 +5,7 @@ const assert = require('assert')
 const crawl = require('../src/crawl')
 
 describe('Crawl', function () {
-  it('爬虫爬取成功', async function () {
+  it('应该返回状态为true', async function () {
     const res = await crawl({
       urls: ['https://www.thepaper.cn/'],
       tags: ["$('.news_li').children('h2').children('a')", "$('.newscontent')"],
