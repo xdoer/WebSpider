@@ -164,7 +164,7 @@ router
          * 数据库中保存的配置参数:url, tags, depth, form, charset, proxyMode, proxies, mode, start, end
          * 爬虫需要的参数:urls, tags, depth, form, charset, proxy
          */
-        const res = await fetch(Object.assign(config, { proxy, urls }))
+        const res = await fetch(Object.assign({}, _configs.data[0].config, { proxy, urls }))
         ctx.body = { state: res.state, time: new Date(), data: res.data, msg: res.state ? '请求成功' : '请求失败' }
 
         const m = await Crawl.update({ cid }, { result: { time: Date.now(), value: res } })
