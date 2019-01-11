@@ -7,7 +7,7 @@ const bodyParser = require('koa-bodyparser')
 const app = new Koa()
 
 const { userRouter, crawlRouter } = require('./router')
-const { PORT, SESSION } = require('./config')
+const { SESSION } = require('./config')
 
 /** 配置session */
 app.keys = ['some secret']
@@ -32,7 +32,4 @@ app.use(async (ctx, next) => {
 app.use(userRouter.routes()).use(userRouter.allowedMethods())
 app.use(crawlRouter.routes()).use(crawlRouter.allowedMethods())
 
-/** 监听端口 */
-app.listen(PORT, () => {
-  console.log('服务已经开始')
-})
+module.exports = app
