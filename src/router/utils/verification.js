@@ -64,7 +64,7 @@ module.exports = ({ url, tags, depth, form, charset, proxyMode, proxies, mode, s
    * 代理检测
    * 如果存在代理，则提交的代理必须是数组形式，并且每个代理都符合正确的形式
    */
-  if (proxies.some(n => filterUrl(n))) {
+  if (proxies.some(n => !filterUrl(n))) {
     _debug(`代理输入错误`, true)
     return {
       state: false,
