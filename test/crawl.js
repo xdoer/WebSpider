@@ -1,11 +1,11 @@
 /**
  * 爬虫测试文件
  */
-const assert = require('assert')
+const expect = require('chai').expect
 const crawl = require('../src/crawl')
 
 describe('Crawl', function () {
-  it('应该返回状态为true', async function () {
+  it('返回值 state 字段应该为 true', async function () {
     const res = await crawl({
       urls: ['https://www.thepaper.cn/'],
       tags: ["$('.news_li').children('h2').children('a')", "$('.newscontent')"],
@@ -15,6 +15,6 @@ describe('Crawl', function () {
       },
       depth: 2
     })
-    assert.equal(true, res.state)
+    expect(res.state).to.be.ok
   })
 })
