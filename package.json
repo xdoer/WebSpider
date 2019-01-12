@@ -4,7 +4,9 @@
   "description": "a online web crawl",
   "private": true,
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node ./app.js",
+    "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha -t 10000",
+    "prod": "NODE_ENV=prod ./app.js"
   },
   "keywords": [
     "crawl"
