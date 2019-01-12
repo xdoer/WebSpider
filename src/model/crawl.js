@@ -46,11 +46,13 @@ class Crawl {
     return collection.insert(crawl)
       .then(docs => ({
         state: true,
+        time: new Date(),
         data: docs,
         msg: '爬虫配置保存成功'
       }))
       .catch(err => ({
         state: false,
+        time: new Date(),
         data: err,
         msg: '爬虫配置保存失败'
       }))
@@ -65,11 +67,13 @@ Crawl.get = (findFlag, option) => {
   return collection.find(findFlag, option)
     .then(docs => ({
       state: docs.length > 0,
+      time: new Date(),
       data: docs,
       msg: docs.length > 0 ? '爬虫配置获取成功' : '爬虫配置获取失败'
     }))
     .catch(err => ({
       state: false,
+      time: new Date(),
       data: err,
       msg: '爬虫配置获取失败'
     }))
@@ -84,11 +88,13 @@ Crawl.update = (findFlag, newValue) => {
   return collection.update(findFlag, { $set: newValue })
     .then(docs => ({
       state: docs.n === 1 && docs.nModified === 1 && docs.ok === 1,
+      time: new Date(),
       data: docs,
       msg: docs.n === 1 && docs.nModified === 1 && docs.ok === 1 ? '爬虫配置更新成功' : '爬虫配置更新失败'
     }))
     .catch((err) => ({
       state: false,
+      time: new Date(),
       data: err,
       msg: '爬虫配置更新失败'
     }))
@@ -104,6 +110,7 @@ Crawl.delete = findFlag => {
       () => {
         return collection.find(findFlag).then(docs => ({
           state: docs.length === 0,
+          time: new Date(),
           data: docs.length > 0 ? '爬虫配置删除失败' : '爬虫配置删除成功',
           msg: docs.length > 0 ? '爬虫配置删除失败' : '爬虫配置删除成功'
         })).catch(err => err)
@@ -111,6 +118,7 @@ Crawl.delete = findFlag => {
     )
     .catch(err => ({
       state: false,
+      time: new Date(),
       data: err,
       msg: '爬虫配置删除失败'
     }))
