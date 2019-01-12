@@ -18,6 +18,7 @@ router
     if (!name || !password || name.toString().length < 3 || password.toString().length < 6) {
       ctx.body = {
         state: false,
+        time: new Date(),
         data: '参数缺失/昵称长度不够/密码长度不够',
         msg: '参数缺失/昵称长度不够/密码长度不够'
       }
@@ -41,6 +42,7 @@ router
         _debug(`用户 ${name} 密码错误`, true)
         ctx.body = {
           state: false,
+          time: new Date(),
           data: '用户名或密码不匹配',
           msg: '用户名或密码不匹配'
         }
@@ -60,6 +62,7 @@ router
     if (!name || !password || !repeatPassword || password !== repeatPassword || password.toString().length < 6 || name.toString().length < 3) {
       ctx.body = {
         state: false,
+        time: new Date(),
         data: '参数缺失/密码不匹配/密码长度不够/昵称长度不够',
         msg: '参数缺失/密码不匹配/密码长度不够/昵称长度不够'
       }
@@ -70,6 +73,7 @@ router
       _debug(`用户名 ${name} 已存在`, true)
       ctx.body = {
         state: false,
+        time: new Date(),
         data: `用户名 ${name} 已存在`,
         msg: `用户名 ${name} 已存在`
       }
@@ -82,7 +86,7 @@ router
       if (user.state) {
         _debug(`用户 ${name} 注册成功`)
         ctx.session.user = {
-          id: user.data.id,
+          uid: user.data.uid,
           name: user.data.name,
           time: Date.now()
         }
@@ -96,30 +100,34 @@ router
    * 用户注销账号操作
    */
   .get('/user/logout', async ctx => {
-    ctx.session = null
-    ctx.body = { state: true, data: '用户注销成功', msg: '用户注销成功' }
+    ctx.session.user = null
+    ctx.body = { state: true, time: new Date(), data: '用户注销成功', msg: '用户注销成功' }
   })
   /**
    * 删除账号操作
    * 删除账号需要验证用户名与密码
    */
   .post('/user/delete', async ctx => {
-    const { name, password } = ctx.body.request
-    if (ctx.session.user.name !== name) return { state: false, data: '验证失败', msg: '验证失败' }
+    const { name, password } = ctx.request.body
+    if (!name || !password) { ctx.body = { state: false, time: new Date(), data: '参数缺失', msg: '参数缺失' }; return }
+    if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '用户未登录', msg: '用户未登录' }; return}
+    
     const users = await User.get({ name })
-    if (users[0].password === _crypto(password)) {
-      const crawl = await Crawl.delete({ uid: users[0].uid })
-      if (crawl.state) {
-        ctx.body = await User.delete({ name })
+    if (users.data[0].password !== _crypto(password)) { ctx.body = { state: false, time: new Date(), data: '验证失败', msg: '验证失败' }; return }
+    
+    const res = await User.delete({ name })
+    if (res.state) {
+      ctx.session.user = null
+      _debug(`账户 ${name} 删除成功`)
+    }
+    ctx.body = res
+
+    if (await Crawl.get({ uid: users.data[0].uid }).state) {
+      if (await Crawl.delete({ uid: users.data[0].uid }).state) {
+        _debug('账户删除，相关配置删除失败', true)
       } else {
-        ctx.body = {
-          state: false,
-          data: '相关爬虫配置删除失败,请联系站长',
-          msg: '删除失败'
-        }
+        _debug('账户删除，相关配置删除成功')
       }
-    } else {
-      return { state: false, data: '验证失败', msg: '验证失败' }
     }
   })
 
