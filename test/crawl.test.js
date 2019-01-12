@@ -1,10 +1,10 @@
 /**
  * 爬虫测试文件
  */
-const expect = require('chai').expect
+const { expect } = require('chai')
 const crawl = require('../src/crawl')
 
-describe('Crawl', function () {
+describe('爬虫测试', function () {
   it('返回值 state 字段应该为 true', async function () {
     const res = await crawl({
       urls: ['https://www.thepaper.cn/'],

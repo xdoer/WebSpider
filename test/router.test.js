@@ -1,14 +1,15 @@
 const server = require('../src')
+const { PORT } = require('../src/config')
 const { expect } = require('chai')
 const request = require('supertest')
 
 describe('路由测试', function () {
   let cookie // 登录或注册时需要记录cookie，以使得能够测试保存配置
   let cid, name = 'test' // 构建API时需要用到
-  let _cid
+  let _cid  // 测试删除配置时用到
   let testName = `test${Date.now()}` // 测试删除账号用的
 
-  let app = server.listen(3001, () => {
+  let app = server.listen(PORT, () => {
     console.log('路由测试服务已开启')
   })
 
@@ -200,7 +201,6 @@ describe('路由测试', function () {
               }
             })
             .expect(200)
-          console.log(res.body)
           expect(res.body.state).to.be.ok
         })
       })

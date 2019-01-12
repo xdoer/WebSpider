@@ -2,7 +2,7 @@
  * 测试函数
  */
 const { _splice, _statistics, _filter: { filterEval, filterUrl }, _time } = require('../src/utils')
-const expect = require('chai').expect
+const { expect } = require('chai')
 
 // 测试多为数组转化为一维数组
 describe('Utils文件夹中模块测试', function () {
