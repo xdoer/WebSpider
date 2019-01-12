@@ -1,7 +1,3 @@
-/**
- * 应用
- */
-
 const monk = require('monk')
 const { DB: { url } } = require('../config')
 const _time= require('../utils/time')
