@@ -4,6 +4,6 @@
  * url链接数据库
  */
 module.exports = {
-  db: 'crawl',
-  url: 'localhost:27017/crawl'
+  db: 'crawlProd',
+  url: 'localhost:27017/crawlProd'
 }
