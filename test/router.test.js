@@ -78,8 +78,7 @@ describe('路由测试', function () {
               repeatPassword: '123456'
             })
             .expect(200)
-          cookie = res.header['set-cookie']
-          cookie = cookie.map(n => n.split(';')[0]).join(';')
+          cookie = res.header['set-cookie'].join(';')
           expect(res.body.state).to.be.ok
         })
       })
@@ -143,8 +142,7 @@ describe('路由测试', function () {
             password: '123456'
           })
           .expect(200)
-          cookie = res.header['set-cookie']
-          cookie = cookie.map(n => n.split(';')[0]).join(';')
+          cookie = res.header['set-cookie'].join(';')
           expect(res.body.state).to.be.ok   
         })
       })
@@ -214,7 +212,8 @@ describe('路由测试', function () {
               form: {
                 'title': "$element.children('.news_title').text()",
                 'content': "$element.children('.news_txt').text()"
-              }
+              },
+              proxyMode: 'internal'
             })
             .expect(200)
           expect(res.body.state).to.not.be.ok
@@ -373,6 +372,31 @@ describe('路由测试', function () {
           const res = await request(app)
             .get(`/crawl/api?user=${name}&cid=${cid}`)
             .expect(200)
+          expect(res.body.state).to.be.ok
+        })
+      })
+      describe('API调用失败(API请求频率限制-请求频率限制在两秒)', function () {
+        it('返回值 state 字段应该为 false', async function () {
+          const res = await request(app)
+            .get(`/crawl/api?user=${name}&cid=${cid}`)
+            .expect(200)
+          expect(res.body.state).to.not.be.ok
+        })
+      })
+      describe('API调用成功(API请求频率限制-两秒后执行请求)', function () {
+        it('返回值 state 字段应该为 true', async function () {
+          const res = await new Promise((resolve, reject) => {
+            // 1秒后执行请求
+            setTimeout(()=>{
+              request(app)
+                .get(`/crawl/api?user=${name}&cid=${cid}`)
+                .expect(200)
+                .end((err, res)=>{
+                  if (err) reject(err)
+                  resolve(res)
+                })
+            }, 2000)
+          })
           expect(res.body.state).to.be.ok
         })
       })
