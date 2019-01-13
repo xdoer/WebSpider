@@ -5,7 +5,7 @@
 const Router = require('koa-router')
 const { Crawl, User } = require('../model')
 const { _debug, _uuid, _statistics } = require('../utils')
-const { STATISTICS } = require('../config')
+const { STATISTICS, API_FREQUENCY, REDIS } = require('../config')
 const fetch = require('../crawl')
 const getProxies = require('../crawl/proxy')
 const verification = require('./utils/verification')
@@ -109,7 +109,7 @@ router
    * 获取API函数
    * 提交参数有爬虫配置id
    * 这里还涉及到数据更新的问题
-   * API调用统计
+   * API调用统计,调用频率限制
    */
   .get('/crawl/api', async ctx => {
     const { user, cid } = ctx.request.query
@@ -131,6 +131,19 @@ router
     // API调用统计信息
     if (STATISTICS) {
       _statistics({ path: ctx.request.header.host + ctx.request.url, cid, time })
+    }
+
+    // 启用API调用频率限制
+    if (API_FREQUENCY) {
+      const name = `${ctx.request.url}_${ctx.request.ip.replace(/::ffff:/, '')}`
+      // 请求频率处理
+      if (await REDIS.getAsync(name)) {
+        ctx.body = { state: false, time: new Date(), data: '请求评率限制', msg: '请求频率限制' }
+        return
+      } else {
+        await REDIS.setAsync(name, true)
+        REDIS.expire(name, API_FREQUENCY)
+      }
     }
 
     /**
