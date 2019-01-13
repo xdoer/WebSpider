@@ -4,6 +4,7 @@
  * DEBUG 开启调试,控制台看到出错信息
  * LOG 开启日志,程序执行信息将被写入到文件
  * STATISTICS 开启API调用统计
+ * API_FREQUENCY API 调用频率(0为关闭调用频率限制,1、2、3...为两次API调用时间限制为1秒2秒3秒...)
  * DB 数据库相关配置
  * SESSION 会话相关配置
  * PROXY 爬虫请求代理相关配置
@@ -11,11 +12,13 @@
  */
 
 module.exports = {
-  PORT: 3000,
+  PORT: 3002,
   DEBUG: true,
   LOG: false,
   STATISTICS: true,
+  API_FREQUENCY: 1,
   DB: require('./db'),
+  REDIS: require('./redis'),
   SESSION: require('./session'),
   PROXY: require('./proxy'),
   CRAWL: require('./crawl')
