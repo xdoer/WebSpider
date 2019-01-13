@@ -12,7 +12,13 @@
 
 ## 没有安装redis可以运行吗?
 
-可以。应用中 redis 主要用在了限制API请求频率上。修改/src/config/[prod/dev/test]/index.js 文件,将API_FREQUENCY 功能置 0 即可。此时测试用例将不会全部通过
+可以。应用中 redis 主要用在了限制API请求频率上。修改/src/config/[prod/dev/test]/index.js 文件,将API_FREQUENCY 功能置 0 ,并且删除代码中对 redis的引用, 此时测试用例将不会全部通过
+
+具体引用文件如下:
+`
+/src/config/[dev/prod/test]/index.js (删除模块导入导出)
+/src/router/crawl.js (删除头部模块导入,API路由下部分代码)
+`
 
 ## 应用安全性怎么样?
 

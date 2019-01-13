@@ -25,8 +25,6 @@ WebSpider
 
 2、保证程序有写文件权限
 
-没有文件写权限的请参阅doc文件夹相关问题
-
 3、运行代码
 ```
 git clone https://github.com/LuckyHH/WebSpider.git
