@@ -9,7 +9,7 @@ WebSpider
 
 ...
 
-基于此，WebSpider诞生了。
+由此,WebSpider诞生了。
 
 ## 特性
 
@@ -21,9 +21,11 @@ WebSpider
 
 
 ## 本地测试
-1、安装Nodejs,MongoDB数据库,Git,
+1、安装Nodejs,MongoDB,Git,Redis
 
-2、保证程序有读写文件权限(日志文件需要动态写入)
+2、保证程序有写文件权限
+
+没有文件写权限的请参阅doc文件夹相关问题
 
 3、运行代码
 ```
@@ -32,14 +34,76 @@ cd WebSpider
 npm install
 ```
 
-4、修改配置文件(src/config)
+4、修改配置文件(src/config)-自定义启动端口，数据库名，Redis等
 
-5、根目录下运行`npm start`启动项目
+5、运行`npm start`启动项目
 
 6，打开```http://localhost:3000```
 
-## 核心代码
+三种模式:测试模式、开发模式与生产模式.
+>* 测试模式使用mocha测试框架,对应用主要部分(路由，爬虫，功能函数)进行了测试。 开启指令: `npm test`
+>* 开发模式默认开启了debug功能,应用运行过程会被打印到控制台。 开启指令: `npm start`
+>* 生产模式默认开启了log 和 API调用统计功能。 开启指令: `npm run prod`
+
+三种模式默认使用了三个数据库:crawlTest,crawlDev 和 crawlProd
+
+## 目录
 ```
+|---docs 模块说明文档
+|    |---env.md 环境说明
+|    |---issues.md 相关问题说明
+|---log 日志文件(按天新建日志文件)
+|    |---error 错误日志
+|    |---running 运行日志
+|---src 源代码
+|    |---config 配置
+|          |---index.js 配置项出口控制
+|          |---dev 开发模式配置项
+|               |---index.js 开发模式配置项出口
+|               |---crawl.js 爬虫相关配置项
+|               |---db.js 数据库配置项
+|               |---proxy.js 代理配置项
+|               |---session.js 会话配置项
+|               |---redis.js redis配置项
+|          |---prod 生产模式配置项
+|          |---test 测试模式配置项
+|    |---crawl 爬虫
+|          |---index.js 爬虫主控文件
+|          |---mapReqUrl.js 并发请求
+|          |---fetchResult 爬虫核心
+|          |---proxy.js 获取代理
+|    |---data 数据目录
+|          |---proxies.json 获取到的代理
+|    |---model 数据模型
+|          |---index.js 模型出口
+|          |---user.js 用户模型
+|          |---crawl.js 爬虫模型
+|          |---statistics.js API统计模型
+|    |---router Web应用路由
+|          |---utils 路由部分需要的辅助函数
+|                |---verification.js 用户输入验证
+|          |---index.js 路由出口
+|          |---user.js 用户路由
+|          |---crawl.js 爬虫接口路由
+|    |---utils 辅助函数
+|          |---index.js 辅助函数出口
+|          |---debug.js 调试模块
+|          |---filter.js 用户输入过滤模块
+|          |---sha.js 加密模块
+|          |---splice.js 多维数组转化为一维数组
+|          |---time.js 格式化时间
+|          |---uuid.js 获取ID模块
+|    |---test 测试文件
+|          |---crawl.test.js 爬虫测试
+|          |---router.test.js 路由测试
+|          |---utils.test.js 功能函数测试
+|    |---index.js 应用出口
+|---static 静态资源文件夹
+|---app.js 应用入口
+```
+
+## 核心代码
+```javascript
 const Koa = require("koa");
 const superagent = require("superagent");
 const cheerio = require("cheerio");
@@ -49,11 +113,11 @@ app.use(async function(ctx, next) {
     if (ctx.request.path == "/" && ctx.request.method == "GET") {
         ctx.body = await new Promise((resolve, reject) => {
             superagent.get('https://cnodejs.org/')
-                .end(function(err, sres) {
+                .end(function(err, _res) {
                     if (err) {
                         reject(err);
                     }
-                    var $ = cheerio.load(sres.text);
+                    const $ = cheerio.load(_res.text);
 
                     $('.topic_title').each(function(idx, element) {
                         var $element = $(element);
@@ -71,53 +135,6 @@ app.use(async function(ctx, next) {
 })
 
 app.listen(3000);
-```
-
-## 目录
-```
-|---docs 模块说明文档
-|    |---crawl.md 爬虫说明
-|---log 日志文件
-|    |---error 错误日志
-|    |---running 运行日志
-|---src 源代码
-|    |---assets 静态资源
-|          |---images 图片
-|          |---favicon.ico 网站icon
-|    |---config 配置
-|          |---index,js 配置项出口
-|          |---crawl.js 爬虫相关配置项
-|          |---db.js 数据库配置项
-|          |---proxy.js 代理配置项
-|          |---session.js 会话配置项
-|    |---crawl 爬虫
-|          |---index.js 爬虫主控文件
-|          |---mapReqUrl.js 并发请求
-|          |---fetchResult 爬虫核心
-|          |---proxy.js 获取代理
-|          |---test.js 测试文件
-|    |---data 数据目录
-|          |---proxies.json 获取到的代理
-|    |---model 数据模型
-|          |---index.js 模型出口
-|          |---user.js 用户模型
-|          |---crawl.js 爬虫模型
-|    |---router Web应用路由
-|          |---utils 路由部分需要的辅助函数
-|                |---verification.js 用户输入验证
-|          |---index.js 路由出口
-|          |---user.js 用户路由
-|          |---crawl.js 爬虫接口路由
-|    |---utils 辅助函数
-|          |---index.js 辅助函数出口
-|          |---debug.js 调试模块
-|          |---filter.js 用户输入过滤模块
-|          |---sha.js 加密模块
-|          |---splice.js 多维数组转化为一维数组
-|          |---time.js 格式化时间
-|          |---uuid.js 获取ID模块
-|    |---index.js 应用入口
-|---static 静态文件文件夹
 ```
 
 ## 使用
@@ -186,21 +203,6 @@ CNode的分页网址
 `$(".topic .content")`指的是目标页面中类名为 topic 的元素下的类名为 content 的子孙元素
 
 填写了两级选择器，说明目标数据在当前页面(即配置页面'目标网址'填写的网址)的下一层，则一级选择器需要指出到达下一层页面的a标签选择器。二级选择器填写的是下一层页面中的数据标签选择器
-
-
-填写同样支持调用一些内置函数来辅助进行数据定位
-
-如:
-
-```
-$(".topic").find('.content')
-
-$(".topic").children('.content')
-
-$(".topic").next().children('.content')
-
-$(".topic").children('.content').next().find('.article')
-```
 
 更多选择器填写规则，参考[cheerio](https://www.npmjs.com/package/cheerio)。
 
@@ -332,6 +334,7 @@ time值为数据的更新时间。
 
 data值为抓取结果，格式为数组。
 
+msg备注
 
 ### 10.生成数据接口
 
@@ -343,19 +346,23 @@ WebSpider 左边栏有近期用户分享的API，贴左边屏幕有个icon，点
 界面为了美观，隐藏了滚动条，在页面中，所有被遮挡的部分均可以滚动。
 
 ### 12.数据自动更新机制
-(1)自API生成起，程序每24小时更新一次数据，time值为更新数据的时间(不管数据更新成功或者失败，time值都会更新)
 
-(2)当应用意外崩溃重启，所有API自动更新失效，直到用户重新请求API。当请求API时，程序发现请求时间比数据库保存的数据更新时间大24小时，会调用爬虫程序并响应结果，time 值为API请求的时间，此时响应时间稍长，同时程序将重新启动自动更新机制，自动更新该API数据。
+~~(1)自API生成起，程序每24小时更新一次数据，time值为更新数据的时间(不管数据更新成功或者失败，time值都会更新)~~
 
-(3)当自动更新机制更新某个API数据时，如果连续5次请求失败，说明目标网站可能闭站，改版，或者封了我服务器的IP，程序将不会再更新该API数据。当用户在数据更新时间(即time值)的24小时后调用API，会调用爬虫程序抓取数据进行响应，此时程序将重新启动定时任务，自动更新数据，如果5次请求失败，就不会再更新数据，在更新时间的24小时后，用户再次调用API，程序调用爬虫程序抓取数据进行响应。。。
+~~(2)当应用意外崩溃重启，所有API自动更新失效，直到用户重新请求API。当请求API时，程序发现请求时间比数据库保存的数据更新时间大24小时，会调用爬虫程序并响应结果，time 值为API请求的时间，此时响应时间稍长，同时程序将重新启动自动更新机制，自动更新该API数据。~~
 
+~~(3)当自动更新机制更新某个API数据时，如果连续5次请求失败，说明目标网站可能闭站，改版，或者封了我服务器的IP，程序将不会再更新该API数据。当用户在数据更新时间(即time值)的24小时后调用API，会调用爬虫程序抓取数据进行响应，此时程序将重新启动定时任务，自动更新数据，如果5次请求失败，就不会再更新数据，在更新时间的24小时后，用户再次调用API，程序调用爬虫程序抓取数据进行响应。。。~~
+
+新版本采用了被动触发数据更新机制,逻辑简单,占用资源低
+
+用户可从前端配置数据更新时间，两次API请求时间间隔如果在配置的时间间隔内，则直接从数据库中读取数据进行返回，否则调用爬虫抓取数据，并将结果更新到数据库
 
 ## 数据接口调用示例
 
 ### 1.前端调用示例
 
 JSONP 的调用方式
-```
+```javascript
 <script>
     function callback(obj) {
         if(obj.data.state){
@@ -371,8 +378,9 @@ JSONP 的调用方式
 
 
 ### 2.后端调用示例:
-```
+
 Node.js后端
+```javascript
 const express = require('express');
 const axios = require("axios");
 const router = express.Router();
@@ -388,41 +396,6 @@ router.get('/douban/movie', function(req, res, next) {
         console.error(err);
     });
 });
-
-ejs模板页面
-<ul>
-        <%
-                for(let i = 0 ; i < content.length ; i++){
-        %>
-            <li>
-                <h3>
-                    <%=content[i].name%>
-                </h3>
-                <img src="<%=content[i].image_src%>" alt="<%=content[i].name%>"><br>
-                <span>导演:
-                    <%=content[i].director%>
-                </span>
-                <br>
-                <span>编剧:
-                    <%=content[i].screenwriter%>
-                </span>
-                <br>
-                <span>主演:
-                    <%=content[i].starring%>
-                </span>
-                <br>
-                <span>
-                    得分:<%=content[i].score%>
-                </span>
-                <br>
-                <p>简介:
-                    <%=content[i].brief%>
-                </p>
-            </li>
-        <%
-                }
-        %>
-    </ul>
 ```
 
 
@@ -446,6 +419,8 @@ https://splider.herokuapp.com/
 ## TODO
 - [x] 对GBK网页格式的抓取支持
 - [x] 支持模式选择，可抓取分页列表
+- [x] API调用频率限制
+- [x] API调用统计(按时间统计)
 - [x] 定义请求头
 - [x] 添加HTTP代理
 - [x] JSONP调用支持
@@ -454,5 +429,3 @@ https://splider.herokuapp.com/
 ## 协议
 
 MIT
-
-
