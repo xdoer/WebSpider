@@ -3,11 +3,16 @@
  */
 const Koa = require('koa')
 const session = require('koa-session')
+const serve = require('koa-static')
 const bodyParser = require('koa-bodyparser')
+const path = require('path')
 const app = new Koa()
 
 const { userRouter, crawlRouter } = require('./router')
 const { SESSION } = require('./config')
+
+/** 配置静态服务根目录 */
+app.use(serve(path.resolve(__dirname, '../static')))
 
 /** 配置session */
 app.keys = ['some secret']
