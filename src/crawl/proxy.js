@@ -86,6 +86,10 @@ const readProxies = async () => {
 
 module.exports = readProxies
 
+// 没有文件写权限时取消下面的注释
+// module.exports = () => []
+
+
 // 运行时报本文件中的错误时，请删除data/proxies.json文件，取消下列代码注释，运行node proxy.js即可
 // async function aa () {
 //   await writeProxies()
