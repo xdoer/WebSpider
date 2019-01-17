@@ -25,12 +25,15 @@ module.exports = ({ url, tags, depth, form, charset, proxyMode, proxies, mode, s
     }
   }
 
-  // 判断是否为对象
-  if (isType.call(form) !== '[object Object]') {
-    _debug(`form 不是 Object 类型`, true)
-    return {
-      state: false,
-      msg: 'form 不是 Object 类型'
+  // 判断是否为JSON
+  if (typeof form === 'string') {
+    try {
+      JSON.parse(form)
+    } catch (e) {
+      return {
+        state: false,
+        msg: 'form 不是 JSON 类型'
+      }      
     }
   }
 
