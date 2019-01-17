@@ -8,7 +8,7 @@ const bodyParser = require('koa-bodyparser')
 const path = require('path')
 const app = new Koa()
 
-const { userRouter, crawlRouter } = require('./router')
+const { userRouter, crawlRouter, proxyRouter } = require('./router')
 const { SESSION } = require('./config')
 
 /** 配置静态服务根目录 */
@@ -36,5 +36,6 @@ app.use(async (ctx, next) => {
 /** 应用路由 */
 app.use(userRouter.routes()).use(userRouter.allowedMethods())
 app.use(crawlRouter.routes()).use(crawlRouter.allowedMethods())
+app.use(proxyRouter.routes()).use(userRouter.allowedMethods())
 
 module.exports = app
