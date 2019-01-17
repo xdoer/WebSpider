@@ -16,7 +16,7 @@ module.exports = {
   DEBUG: false,
   LOG: false,
   STATISTICS: false,
-  API_FREQUENCY: 2,
+  API: require('./api'),
   DB: require('./db'),
   REDIS: require('./redis'),
   SESSION: require('./session'),
