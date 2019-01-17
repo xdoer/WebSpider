@@ -3,18 +3,11 @@
  */
 const { expect } = require('chai')
 const crawl = require('../src/crawl')
+const { newspaper } = require('../src/data/config')
 
 describe('爬虫测试', function () {
   it('返回值 state 字段应该为 true', async function () {
-    const res = await crawl({
-      urls: ['https://www.thepaper.cn/'],
-      tags: ["$('.news_li').children('h2').children('a')", "$('.newscontent')"],
-      form: {
-        'title': "$element.children('.news_title').text()",
-        'content': "$element.children('.news_txt').text()"
-      },
-      depth: 2
-    })
+    const res = await crawl(newspaper)
     expect(res.state).to.be.ok
   })
 })
