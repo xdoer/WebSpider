@@ -17,7 +17,7 @@ const bound = ({ res, tags, depth, form, charset, tagNum, proxy }) => depth > ta
  * @param {number} depth 抓取深度
  * @param {object} form 需要输出的形式
  * @param {string} charset 网页编码
- * @param {boolean} useProxy 使用代理
+ * @param {string} proxy 配置的请求代理
  */
 module.exports = async ({ urls, tags, depth, form, charset, proxy }) => {
   let i = 0
