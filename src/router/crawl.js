@@ -5,7 +5,7 @@
 const Router = require('koa-router')
 const { Crawl, User } = require('../model')
 const { _debug, _uuid, _statistics } = require('../utils')
-const { STATISTICS, API_FREQUENCY, REDIS } = require('../config')
+const { STATISTICS, API:{ API_FREQUENCY, PREVIEW_FREQUENCY }, REDIS } = require('../config')
 const fetch = require('../crawl')
 const getProxies = require('../crawl/proxy')
 const verification = require('./utils/verification')
@@ -29,7 +29,7 @@ router
   .post('/crawl/preview', async ctx => {
     // 前端使用 axios 进行请求，使用 qs 模块格式化 post 请求数据，数字会以字符串形式进行传递，JSON数据会变成对象
     let { url, tags, depth = '1', form, charset = 'utf-8', proxyMode = 'none', proxies = [], mode = 'plain', start = '0', end = '0', interval = '0' } = ctx.request.body
-
+    
     // 参数验证
     const dataState = verification({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end, interval })
     if (!dataState.state) { ctx.body = { state: false, time: new Date(), data: dataState.msg, msg: '参数验证失败'}; return}
@@ -41,6 +41,19 @@ router
     start = Number.parseInt(start)
     end = Number.parseInt(end)
     let urls = mode === 'pagination' ? (new Array(end - start)).fill(url).map(n => n.replace(/\*/i, start++)) : [url]
+
+    // 启用API调用频率限制
+    if (PREVIEW_FREQUENCY) {
+      const name = `${ctx.request.url}_${ctx.request.ip.replace(/::ffff:/, '')}_preview`
+      // 请求频率处理
+      if (await REDIS.getAsync(name)) {
+        ctx.body = { state: false, time: new Date(), data: '请求频率限制', msg: '请求频率限制' }
+        return
+      } else {
+        await REDIS.setAsync(name, true)
+        REDIS.expire(name, PREVIEW_FREQUENCY)
+      }
+    }
 
     /**
      * 代理模式
@@ -55,7 +68,7 @@ router
     }
 
     // 调用爬虫
-    const res = await fetch({ urls, tags, depth: Number.parseInt(depth), form, charset, proxy })
+    const res = await fetch({ urls, tags, depth: Number.parseInt(depth), form: JSON.parse(form), charset, proxy })
     ctx.body = {
       state: res.state,
       time: new Date(),
@@ -135,7 +148,7 @@ router
 
     // 启用API调用频率限制
     if (API_FREQUENCY) {
-      const name = `${ctx.request.url}_${ctx.request.ip.replace(/::ffff:/, '')}`
+      const name = `${ctx.request.url}_${ctx.request.ip.replace(/::ffff:/, '')}_api`
       // 请求频率处理
       if (await REDIS.getAsync(name)) {
         ctx.body = { state: false, time: new Date(), data: '请求评率限制', msg: '请求频率限制' }
