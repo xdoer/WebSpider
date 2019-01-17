@@ -1,0 +1,30 @@
+{
+  "newspaper": {
+    "urls": ["https://www.thepaper.cn/"],
+    "tags": ["$('.news_li').children('h2').children('a')", "$('.newscontent')"],
+    "form": {
+      "title": "$element.children('.news_title').text()",
+      "content": "$element.children('.news_txt').text()"
+    },
+    "depth": 2    
+  },
+  "proxyXiCi": {
+    "urls": ["http://www.xicidaili.com/nn/1", "http://www.xicidaili.com/nn/2","http://www.xicidaili.com/nn/3"],
+    "tags": ["$(\"#ip_list tr\").not($(\"#ip_list tr\").eq(0))"],
+    "form": {
+      "ip": "$element.children('td').eq(1).text()",
+      "port": "$element.children('td').eq(2).text()"
+    },
+    "depth": 1
+  },
+  "proxyFreeList": {
+    "urls": ["https://free-proxy-list.net/"],
+      "tags": ["$(\"#proxylisttable tr\").not($(\"#proxylisttable tr\").eq(0)).not($(\"proxylisttable tr\").eq($(\"#proxylisttable tr\").length-1))"],
+      "form": {
+      "ip": "$element.children('td').eq(0).text()",
+      "port": "$element.children('td').eq(1).text()"
+    },
+    "depth": 1,
+    "proxy": "http://71.183.100.76:42413/"
+  }
+}
