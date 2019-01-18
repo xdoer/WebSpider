@@ -6,7 +6,7 @@
       "title": "$element.children('.news_title').text()",
       "content": "$element.children('.news_txt').text()"
     },
-    "depth": 2    
+    "depth": 2
   },
   "proxyXiCi": {
     "urls": ["http://www.xicidaili.com/nn/1", "http://www.xicidaili.com/nn/2","http://www.xicidaili.com/nn/3"],
