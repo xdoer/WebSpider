@@ -4,10 +4,10 @@
  */
 const { _filter: { filterEval, filterUrl }, _debug } = require('../../utils')
 
-module.exports = ({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end, interval }) => {
+module.exports = ({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end }) => {
   const isType = Object.prototype.toString
   // 判断是否为字符串
-  const strAry = [url, depth, charset, proxyMode, mode, start, end, interval]
+  const strAry = [url, depth, charset, proxyMode, mode, start, end]
   if (strAry.some(n => isType.call(n) !== '[object String]')) {
     _debug(`url/depth/start/end 不是 String 类型`, true)
     return {
@@ -39,11 +39,11 @@ module.exports = ({ url, tags, depth, form, charset, proxyMode, proxies, mode, s
 
   // 数据校验
   const isInvalid = n => Number.isNaN(Number.parseInt(n))
-  if ([depth, start, end, interval].some(n => isInvalid(n))) {
-    _debug(`depth/start/end/应当可以转化为 Number 类型且不为NaN(interval若存在也同理)`, true)
+  if ([depth, start, end].some(n => isInvalid(n))) {
+    _debug(`depth/start/end/应当可以转化为 Number 类型且不为NaN`, true)
     return {
       state: false,
-      msg: 'depth/start/end应当可以转化为 Number 类型且不为NaN(interval若存在也同理)'
+      msg: 'depth/start/end应当可以转化为 Number 类型且不为NaN'
     }
   }
 
