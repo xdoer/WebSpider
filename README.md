@@ -50,6 +50,7 @@ npm install
 |---docs 模块说明文档
 |    |---env.md 环境说明
 |    |---issues.md 相关问题说明
+|    |---proxy.md 代理说明
 |---log 日志文件(按天新建日志文件)
 |    |---error 错误日志
 |    |---running 运行日志
@@ -63,15 +64,18 @@ npm install
 |               |---proxy.js 代理配置项
 |               |---session.js 会话配置项
 |               |---redis.js redis配置项
+|               |---api.js API请求频率限制配置
 |          |---prod 生产模式配置项
 |          |---test 测试模式配置项
 |    |---crawl 爬虫
 |          |---index.js 爬虫主控文件
 |          |---mapReqUrl.js 并发请求
 |          |---fetchResult 爬虫核心
-|          |---proxy.js 获取代理
+|    |---proxy 代理
+|          |---index.js 可用代理检测模块
 |    |---data 数据目录
-|          |---proxies.json 获取到的代理
+|          |---proxies.json 可用代理文件
+|          |---config.json 爬虫配置文件
 |    |---model 数据模型
 |          |---index.js 模型出口
 |          |---user.js 用户模型
@@ -83,6 +87,7 @@ npm install
 |          |---index.js 路由出口
 |          |---user.js 用户路由
 |          |---crawl.js 爬虫接口路由
+|          |---proxy.js 代理检测路由
 |    |---utils 辅助函数
 |          |---index.js 辅助函数出口
 |          |---debug.js 调试模块

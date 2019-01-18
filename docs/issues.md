@@ -8,17 +8,11 @@
 
 ## 没有安装mongodb数据库可以运行吗?
 
-没有安装数据库只能运行src/crawl中爬虫模块。具体调用参阅/test/crawl.test.js
+没有安装数据库只能运行src/crawl中爬虫模块。具体调用参阅`/test/crawl.test.js`
 
 ## 没有安装redis可以运行吗?
 
-可以。应用中 redis 主要用在了限制API请求频率上。修改/src/config/[prod/dev/test]/index.js 文件,将API_FREQUENCY 功能置 0 ,并且删除代码中对 redis的引用, 此时测试用例将不会全部通过
-
-具体引用文件如下:
-`
-/src/config/[dev/prod/test]/index.js (删除模块导入导出)
-/src/router/crawl.js (删除头部模块导入,API路由下部分代码)
-`
+同没安装mongodb数据库情况相同。
 
 ## 应用安全性怎么样?
 
@@ -26,9 +20,9 @@
 
 应用中，我在使用 eval 函数整合用户输入的模块中开启了严格模式，该模式下，有着不允许使用未声明的变量，不允许删除变量或对象，不允许变量重名，不允许使用转义字符，不允许使用八进制，在作用域 eval 中创建的变量将不能被调用等众多特点。此外，使用正则表达式对用户输入进行了过滤，用户输入中，只要包含环境关键字，程序即返回给用户错误信息。
 
-## 应用中内置代理是从哪获取的?
+## 应用中代理模式中的内置代理，代理数据是从哪获取的?
 
-代理来源于国外的免费的代理网站[FreeProxyList](https://free-proxy-list.net/).由我另外一个小项目[HttpProxy](https://proxys.herokuapp.com)进行可用代理检测，并且提供了相关API供用户使用。本项目中的内置代理即请求API由此可得
+代理数据来源于[西刺代理](https://www.xicidaili.com/)和[FreeProxyList](https://free-proxy-list.net/).
 
 ## 每次调用API都会抓取一次数据吗?那样岂不是响应很慢?
 
