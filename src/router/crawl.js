@@ -7,7 +7,7 @@ const { Crawl, User } = require('../model')
 const { _debug, _uuid, _statistics } = require('../utils')
 const { STATISTICS, API:{ API_FREQUENCY, PREVIEW_FREQUENCY }, REDIS } = require('../config')
 const fetch = require('../crawl')
-const getProxies = require('../crawl/proxy')
+const getProxies = require('../proxy')
 const verification = require('./utils/verification')
 const router = new Router()
 
@@ -24,14 +24,13 @@ router
    * @param {string} mode 抓取模式(普通模式与分页模式)
    * @param {string} start 分页模式下起始页码
    * @param {string} end 分页模式下终止页码
-   * @param {string} interval 更新数据时间间隔
    */
   .post('/crawl/preview', async ctx => {
     // 前端使用 axios 进行请求，使用 qs 模块格式化 post 请求数据，数字会以字符串形式进行传递，JSON数据会变成对象
-    let { url, tags, depth = '1', form, charset = 'utf-8', proxyMode = 'none', proxies = [], mode = 'plain', start = '0', end = '0', interval = '0' } = ctx.request.body
+    let { url, tags, depth = '1', form, charset = 'utf-8', proxyMode = 'none', proxies = [], mode = 'plain', start = '0', end = '0' } = ctx.request.body
     
     // 参数验证
-    const dataState = verification({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end, interval })
+    const dataState = verification({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end })
     if (!dataState.state) { ctx.body = { state: false, time: new Date(), data: dataState.msg, msg: '参数验证失败'}; return}
 
     /**
@@ -85,17 +84,17 @@ router
     if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '未登录', msg: '未登录' }; return }
 
     // 前端使用 axios 进行请求，使用 qs 模块格式化 post 请求数据，数字会已字符串进行传递，JSON数据会变成对象
-    let { url, tags, depth = '1', form, charset = 'utf-8', proxyMode = 'none', proxies = [], mode = 'plain', start = '0', end = '0', interval = '0' } = ctx.request.body
+    let { url, tags, depth = '1', form, charset = 'utf-8', proxyMode = 'none', proxies = [], mode = 'plain', start = '0', end = '0' } = ctx.request.body
 
     // 参数验证
-    const dataState = verification({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end, interval })
+    const dataState = verification({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end })
     if (!dataState.state) { ctx.body = { state: false, time: new Date(), data: dataState.msg, msg: '参数验证失败' }; return }
 
     // 实例化一个爬虫模型对象
     const crawlConfig = new Crawl({
       uid: ctx.session.user.uid,
       cid: _uuid(),
-      interval: Number.parseInt(interval),
+      interval: 0,
       config: { url, tags, depth: Number.parseInt(depth), form, charset, proxyMode, proxies, mode, start, end }
     })
     ctx.body = await crawlConfig.save()
