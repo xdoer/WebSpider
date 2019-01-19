@@ -66,14 +66,27 @@ router
       proxy = proxies[Math.floor(Math.random() * proxies.length + 1) - 1]
     }
 
-    // 调用爬虫
-    const res = await fetch({ urls, tags, depth: Number.parseInt(depth), form: JSON.parse(form), charset, proxy })
-    ctx.body = {
-      state: res.state,
-      time: new Date(),
-      data: res.data,
-      msg: res.state ? '抓取成功' : '抓取失败'
+    form = process.env.NODE_ENV === 'test' ? form : JSON.parse(form)
+
+    try {
+      // 调用爬虫
+      const res = await fetch({ urls, tags, depth: Number.parseInt(depth), form, charset, proxy })
+
+      ctx.body = {
+        state: res.state,
+        time: new Date(),
+        data: res.data,
+        msg: res.state ? '抓取成功' : '抓取失败'
+      }      
+    } catch(e) {
+      ctx.body = {
+        state: false,
+        time: new Date(),
+        data: '爬虫抓取数据出错',
+        msg: e
+      }
     }
+
   })
   /**
    * 保存用户提交的爬虫配置
