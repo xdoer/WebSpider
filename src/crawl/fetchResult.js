@@ -13,7 +13,7 @@ const { CRAWL: { HEADER } } = require('../config')
 require('superagent-charset')(superagent)
 require('superagent-proxy')(superagent)
 
-module.exports = async ({ url, tags, tagNum, depth, form, charset, proxy, fn }) => {
+module.exports = async ({ url, tags, tagNum, depth = 1, form, charset = 'utf-8', proxy, fn }) => {
   const bound = (err, res) => {
     if (err) {
       _debug(`请求出错 ${err}`, true)
