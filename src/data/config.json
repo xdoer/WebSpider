@@ -24,7 +24,6 @@
       "ip": "$element.children('td').eq(0).text()",
       "port": "$element.children('td').eq(1).text()"
     },
-    "depth": 1,
-    "proxy": "http://71.183.100.76:42413/"
+    "depth": 1
   }
 }
