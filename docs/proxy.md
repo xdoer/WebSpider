@@ -17,7 +17,7 @@
 进行检测前需要进行相关配置。配置文件在`/src/config/[dev/prod/test]/proxy.js`。主要配置**timeout**参数与**interval**参数。**timeout**指配置代理后发出请求后等待响应的时间，**interval**指进行代理检测的时间间隔。
 
 ### 代理检测
-检测代理的原理是将代理地址配置到请求中，检测请求返回的特征数据，如果返回则证明代理可用。应用中对`http://www.ip-api.com/json`进行请求，判断返回值 **status** 是否为 **success**。检测结果将被存查到`/src/data/proxies.json`文件中。
+检测代理的原理是将代理地址配置到请求中，检测请求返回的特征数据，如果返回则证明代理可用。应用中对`http://www.ip-api.com/json`进行请求，判断返回值 **status** 是否为 **success**。检测结果将被存到redis中。
 
 ## 代理API路由
 

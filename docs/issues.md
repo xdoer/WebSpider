@@ -2,9 +2,7 @@
 
 ## 部署平台没有写权限怎么办?
 
-1.打开/src/config/[prod/dev/test]/index.js 文件,将 log 功能置为 false
-
-2.打开/src/crawl/proxy.js 文件,按注释操作,修改文件返回函数
+打开/src/config/[prod/dev/test]/index.js 文件,将 log 功能置为 false
 
 ## 没有安装mongodb数据库可以运行吗?
 
