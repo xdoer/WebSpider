@@ -16,7 +16,7 @@ const async = require('async')
  */
 const writeProxies = async () => {
   // 初始化写入数据
-  const proxies = [] 
+  let proxies = [] 
 
   // 如果存在西刺代理的配置，则抓取西刺代理.
   if (proxyXiCi) {
@@ -27,6 +27,7 @@ const writeProxies = async () => {
       _debug(`西刺代理获取失败,失败详情:${xici.data}`)
     }
   }
+
   if (proxyFreeList) {
     const list = await crawl(proxyFreeList)
     if (list.state) {
@@ -60,8 +61,8 @@ const writeProxies = async () => {
   proxies = proxies.concat(proxy)
 
   try {
-    await REDIS.setAsync('proxy', proxies)
-    REDIS.expire('proxy', interval * 60 * 60)
+    await REDIS.setAsync('proxy', JSON.stringify(proxies))
+    REDIS.expire('proxy', interval)
   } catch(e) {
     _debug(`Redis配置代理失败,${e}`)
   }
@@ -72,14 +73,14 @@ const writeProxies = async () => {
  */
 const readProxies = async () => {
   try {
-    let result = await REDIS.getAsync('proxy')
+    let result = JSON.parse(await REDIS.getAsync('proxy'))
 
     // 如果获取到了，说明没过期
     if (result) {
       return Promise.resolve(result)
     } else {
       await writeProxies()
-      return Promise.resolve(await REDIS.getAsync('proxy'))
+      return Promise.resolve(JSON.parse(await REDIS.getAsync('proxy')))
     }
   } catch(e) {
     _debug(`Redis读取代理失败,${e}`)
