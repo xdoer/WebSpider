@@ -40,7 +40,7 @@ router
       state: true,
       time: new Date(),
       data: result,
-      msg: `代理获取成功,数据每${interval}更新一次`
+      msg: `代理获取成功,数据每${interval}秒更新一次`
     }
   })
 
