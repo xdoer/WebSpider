@@ -16,7 +16,7 @@ const async = require('async')
  */
 const writeProxies = async () => {
   // 初始化写入数据
-  let proxies = [] 
+  let proxies = []
 
   // 如果存在西刺代理的配置，则抓取西刺代理.
   if (proxyXiCi) {
@@ -53,6 +53,9 @@ const writeProxies = async () => {
         }
       })
     }, (err, res) => {
+      if (err) {
+        _debug(`代理检测出错，错误详情${err}`)
+      }
       resolve([...new Set(res)].filter(n => n !== '' && filterUrl(n)))
     })
   })
@@ -63,7 +66,7 @@ const writeProxies = async () => {
   try {
     await REDIS.setAsync('proxy', JSON.stringify(proxies))
     REDIS.expire('proxy', interval)
-  } catch(e) {
+  } catch (e) {
     _debug(`Redis配置代理失败,${e}`)
   }
 }
@@ -82,7 +85,7 @@ const readProxies = async () => {
       await writeProxies()
       return Promise.resolve(JSON.parse(await REDIS.getAsync('proxy')))
     }
-  } catch(e) {
+  } catch (e) {
     _debug(`Redis读取代理失败,${e}`)
   }
   return Promise.resolve([])

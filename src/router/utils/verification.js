@@ -33,7 +33,7 @@ module.exports = ({ url, tags, depth, form, charset, proxyMode, proxies, mode, s
       return {
         state: false,
         msg: 'form 不是 JSON 类型'
-      }      
+      }
     }
   }
 

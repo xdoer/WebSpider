@@ -1,6 +1,6 @@
 const monk = require('monk')
 const { DB: { url } } = require('../config')
-const _time= require('../utils/time')
+const _time = require('../utils/time')
 const db = monk(url)
 const collection = db.get('statistics')
 
@@ -35,12 +35,12 @@ class Statistics {
       count: this.count,
       history: [{
         year,
-        data:[{
+        data: [{
           month,
-          data:[{
+          data: [{
             day,
             // data的长度就是当天的该 API 调用次数
-            data:[_time(t)]
+            data: [_time(t)]
           }]
         }]
       }]

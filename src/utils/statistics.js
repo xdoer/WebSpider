@@ -36,30 +36,30 @@ module.exports = async ({ path, cid, time = Date.now() }) => {
               }
             })
             // 如果当前月中没有找到当天,则将当天存入当月
-            __flag ? '' : _month.data.push({ day, data: [formatTime(t)] })
+            __flag || _month.data.push({ day, data: [formatTime(t)] })
           }
-          _flag ? '' : _year.data.push({ month, data: [{ day, data: [formatTime(t)] }] })
+          _flag || _year.data.push({ month, data: [{ day, data: [formatTime(t)] }] })
         })
       }
       return _year
     })
-    flag ? '' : history.push({ year, data: [{ month, data: [{ day, data: [formatTime(t)] }] }] })
+    flag || history.push({ year, data: [{ month, data: [{ day, data: [formatTime(t)] }] }] })
     const res = await Statistics.update({ url: path }, { count: ++count, history })
     if (!res.state) {
       _debug('统计信息更新出错', true)
     }
     return res
   } else {
-      const res = await (new Statistics({
-          sid: _uuid(),
-          cid: cid,
-          url: path,
-          time: time.toString(),
-          count: 1
-        })).save()
-      if (!res.state) {
-        _debug(`API初始化失败, 失败详情: ${ res.msg }`, true)
-      }
-      return res
+    const res = await (new Statistics({
+      sid: _uuid(),
+      cid: cid,
+      url: path,
+      time: time.toString(),
+      count: 1
+    })).save()
+    if (!res.state) {
+      _debug(`API初始化失败, 失败详情: ${res.msg}`, true)
+    }
+    return res
   }
 }

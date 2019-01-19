@@ -110,11 +110,11 @@ router
   .post('/user/delete', async ctx => {
     const { name, password } = ctx.request.body
     if (!name || !password) { ctx.body = { state: false, time: new Date(), data: '参数缺失', msg: '参数缺失' }; return }
-    if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '用户未登录', msg: '用户未登录' }; return}
-    
+    if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '用户未登录', msg: '用户未登录' }; return }
+
     const users = await User.get({ name })
     if (users.data[0].password !== _crypto(password)) { ctx.body = { state: false, time: new Date(), data: '验证失败', msg: '验证失败' }; return }
-    
+
     const res = await User.delete({ name })
     if (res.state) {
       ctx.session.user = null

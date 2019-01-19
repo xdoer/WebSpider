@@ -1,6 +1,7 @@
 /**
  * 测试函数
  */
+/* eslint-disable */
 const { _splice, _statistics, _filter: { filterEval, filterUrl }, _time } = require('../src/utils')
 const { expect } = require('chai')
 

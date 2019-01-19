@@ -1,6 +1,8 @@
 /**
  * 爬虫测试文件
  */
+
+/* eslint-disable */
 const { expect } = require('chai')
 const crawl = require('../src/crawl')
 const { newspaper } = require('../src/data/config')

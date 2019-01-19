@@ -1,3 +1,4 @@
+/* eslint-disable */
 const server = require('../src')
 const { PORT } = require('../src/config')
 const { expect } = require('chai')

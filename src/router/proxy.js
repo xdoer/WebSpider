@@ -5,13 +5,12 @@
  */
 
 const Router = require('koa-router')
-const { REDIS, API: { PROXY_FREQUENCY}, PROXY: { interval }  } = require('../config')
+const { REDIS, API: { PROXY_FREQUENCY }, PROXY: { interval } } = require('../config')
 const getProxy = require('../proxy')
 const router = new Router()
 
 router
   .get('/proxy', async ctx => {
-    
     // API调用频率限制
     if (PROXY_FREQUENCY) {
       const name = `${ctx.request.url}_${ctx.request.ip.replace(/::ffff:/, '')}_proxy`
@@ -21,13 +20,13 @@ router
       } else {
         await REDIS.setAsync(name, true)
         REDIS.expire(name, PROXY_FREQUENCY)
-      }    
+      }
     }
 
     let result
     try {
-      result =  await getProxy()
-    } catch(e) {
+      result = await getProxy()
+    } catch (e) {
       ctx.body = {
         state: false,
         time: new Date(),

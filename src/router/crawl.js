@@ -5,7 +5,7 @@
 const Router = require('koa-router')
 const { Crawl, User } = require('../model')
 const { _debug, _uuid, _statistics } = require('../utils')
-const { STATISTICS, API:{ API_FREQUENCY, PREVIEW_FREQUENCY }, REDIS } = require('../config')
+const { STATISTICS, API: { API_FREQUENCY, PREVIEW_FREQUENCY }, REDIS } = require('../config')
 const fetch = require('../crawl')
 const getProxies = require('../proxy')
 const verification = require('./utils/verification')
@@ -28,10 +28,10 @@ router
   .post('/crawl/preview', async ctx => {
     // 前端使用 axios 进行请求，使用 qs 模块格式化 post 请求数据，数字会以字符串形式进行传递，JSON数据会变成对象
     let { url, tags, depth = '1', form, charset = 'utf-8', proxyMode = 'none', proxies = [], mode = 'plain', start = '0', end = '0' } = ctx.request.body
-    
+
     // 参数验证
     const dataState = verification({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end })
-    if (!dataState.state) { ctx.body = { state: false, time: new Date(), data: dataState.msg, msg: '参数验证失败'}; return}
+    if (!dataState.state) { ctx.body = { state: false, time: new Date(), data: dataState.msg, msg: '参数验证失败' }; return }
 
     /**
      * 分页请求模式下,构造请求链接数组
@@ -77,8 +77,8 @@ router
         time: new Date(),
         data: res.data,
         msg: res.state ? '抓取成功' : '抓取失败'
-      }      
-    } catch(e) {
+      }
+    } catch (e) {
       ctx.body = {
         state: false,
         time: new Date(),
@@ -86,7 +86,6 @@ router
         msg: e
       }
     }
-
   })
   /**
    * 保存用户提交的爬虫配置
@@ -148,7 +147,7 @@ router
     // 数据读取错误
     if (!_users.state || !_configs.state) { ctx.body = { state: false, time: new Date(), data: '数据读取出错,请确保保存了该配置', msg: '操作失败' }; return }
     const _user = _users.data[0]
-    const { uid, time, interval, result, config: { url, proxyMode, proxies, mode, start, end } } = _configs.data[0]
+    let { uid, time, interval, result, config: { url, proxyMode, proxies, mode, start, end } } = _configs.data[0]
 
     // 链接中的用户 id 和爬虫配置中的用户id不匹配
     if (uid !== _user.uid) { ctx.body = { state: false, time: new Date(), data: '参数错误', msg: '用户名与配置ID不匹配' }; return }

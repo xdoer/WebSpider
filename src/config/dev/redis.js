@@ -1,6 +1,3 @@
-
-
-
 const redis = require('redis')
 const bluebird = require('bluebird')
 bluebird.promisifyAll(redis.RedisClient.prototype)
@@ -12,7 +9,7 @@ bluebird.promisifyAll(redis.RedisClient.prototype)
 const config = {
   host: '127.0.0.1',
   port: 6379,
-  connect_timeout: 3600000,
+  connect_timeout: 3600000
   // password: null
 }
 
