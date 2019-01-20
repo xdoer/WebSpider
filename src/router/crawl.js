@@ -112,22 +112,12 @@ router
     ctx.body = await crawlConfig.save()
   })
   /**
-   * 更新权限
-   * 开放权限,公布到首页
-   */
-  .post('/crawl/config', async ctx => {
-    if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '未登录', msg: '未登录' }; return }
-    const { cid, permission } = ctx.request.body
-    if (!cid || !permission) { ctx.body = { state: false, time: new Date(), data: '参数缺失', msg: '参数缺失' }; return }
-    ctx.body = await Crawl.update({ cid }, { permission: permission === 'true' })
-  })
-  /**
    * 用户分享的API接口
    * 传递的参数:page,pageSize
    */
   .get('/crawl/share', async ctx => {
     const { page, pageSize } = ctx.request.query
-    ctx.body = await Crawl.get({ permission: true }, { fields: { config: 1 }, sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
+    ctx.body = await Crawl.get({ permission: true }, { fields: { config: 1, interval: 1 }, sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
   })
   /**
    * 获取API函数
@@ -212,7 +202,7 @@ router
    */
   .delete('/crawl/config', async ctx => {
     if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '未登录', msg: '未登录' }; return }
-    const { cid } = ctx.request.body
+    const { cid } = ctx.request.query
     if (!cid) { ctx.body = { state: false, time: new Date(), data: '参数缺失', msg: '参数缺失' }; return }
     const res = await Crawl.get({ cid })
     if (res.state) {
@@ -224,10 +214,36 @@ router
   /**
    * 登录后，获取
    */
-  .get('/crawl/configs', async ctx => {
+  .get('/crawl/config', async ctx => {
+    // if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '未登录', msg: '未登录' }; return }
+    let { page, pageSize } = ctx.request.query
+    page = Number.parseInt(page)
+    pageSize = Number.parseInt(pageSize)
+    // ctx.body = await Crawl.get({ uid: ctx.session.user.uid }, { sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
+    ctx.body = await Crawl.get({ uid: 'eb801c69-64ee-4b22-917f-461db528fd47' }, { fields: { result: false }, sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
+  })
+  /**
+   * 更新配置
+   * API描述，标签，功能...
+   */
+  .post('/crawl/config', async ctx => {
     if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '未登录', msg: '未登录' }; return }
-    const { page, pageSize } = ctx.request.query
-    ctx.body = await Crawl.get({ uid: ctx.session.user.uid }, { sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
+    const { cid, permission, tag, description } = ctx.request.body
+    const obj = {}
+    if (cid) obj.cid = cid
+    if (permission) {
+      if (permission === 'true' || permission === 'false') {
+        obj.permission = permission === 'true'
+      } else {
+        obj.permission = false
+      }
+    }
+    if (tag) obj.tag = tag
+    if (description) obj.description = description
+
+    if (!cid || !permission) { ctx.body = { state: false, time: new Date(), data: '参数缺失', msg: '参数缺失' }; return }
+
+    ctx.body = await Crawl.update({ cid }, obj)
   })
 
 module.exports = router
