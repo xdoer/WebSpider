@@ -198,7 +198,7 @@ router
         const res = await fetch(Object.assign({}, _configs.data[0].config, { proxy, urls }))
         ctx.body = { state: res.state, time: new Date(), data: res.data, msg: res.state ? '请求成功' : '请求失败' }
 
-        const m = await Crawl.update({ cid }, { result: { time: Date.now(), value: res } })
+        const m = await Crawl.update({ cid }, { result: { time: '' + Date.now(), value: res } })
         if (!m.state) {
           _debug('API调用,爬虫结果更新失败', true)
         }
@@ -220,6 +220,14 @@ router
     } else {
       ctx.body = { state: false, time: new Date(), data: res.data, msg: res.msg }
     }
+  })
+  /**
+   * 登录后，获取
+   */
+  .get('/crawl/configs', async ctx => {
+    if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '未登录', msg: '未登录' }; return }
+    const { page, pageSize } = ctx.request.query
+    ctx.body = await Crawl.get({ uid: ctx.session.user.uid }, { sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
   })
 
 module.exports = router
