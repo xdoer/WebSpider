@@ -29,6 +29,8 @@ class Crawl {
       time: '' + Date.now(),
       value: []
     }
+    this.tag = ''
+    this.description = ''
     this.time = '' + Date.now()
   }
 
@@ -40,7 +42,10 @@ class Crawl {
       config: this.config,
       permission: this.permission,
       interval: this.interval,
-      result: this.result
+      result: this.result,
+      tag: this.tag,
+      description: this.description,
+      time: this.time
     }
 
     return collection.insert(crawl)
