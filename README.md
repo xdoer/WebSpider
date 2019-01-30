@@ -68,7 +68,6 @@ npm install
 |    |---proxy 代理
 |          |---index.js 可用代理检测模块
 |    |---data 数据目录
-|          |---proxies.json 可用代理文件
 |          |---config.json 爬虫配置文件
 |    |---model 数据模型
 |          |---index.js 模型出口
