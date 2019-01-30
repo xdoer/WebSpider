@@ -4,7 +4,7 @@
 
 const Router = require('koa-router')
 const { Crawl, User } = require('../model')
-const { _debug, _uuid, _statistics } = require('../utils')
+const { _debug, _uuid, _statistics, _isNaN } = require('../utils')
 const { STATISTICS, API: { API_FREQUENCY, PREVIEW_FREQUENCY }, REDIS } = require('../config')
 const fetch = require('../crawl')
 const getProxies = require('../proxy')
@@ -116,8 +116,12 @@ router
    * 传递的参数:page,pageSize
    */
   .get('/crawl/share', async ctx => {
-    const { page, pageSize } = ctx.request.query
-    ctx.body = await Crawl.get({ permission: true }, { fields: { config: 1, interval: 1 }, sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
+    const { page = 1, pageSize = 10 } = ctx.request.query
+    if (_isNaN(page) || _isNaN(pageSize)) {
+      ctx.body = { state: false, time: new Date(), data: '参数错误', msg: '参数包含page,pageSize,且都为数字' }
+      return
+    }
+    ctx.body = await Crawl.get({ permission: true }, { fields: { config: 1, interval: 1 }, sort: { time: -1 }, skip: Number.parseInt(pageSize) * Number.parseInt(page), limit: Number.parseInt(pageSize) })
   })
   /**
    * 获取API函数
@@ -215,12 +219,12 @@ router
    * 登录后，获取
    */
   .get('/crawl/config', async ctx => {
-    // if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '未登录', msg: '未登录' }; return }
+    if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '未登录', msg: '未登录' }; return }
     let { page, pageSize } = ctx.request.query
     page = Number.parseInt(page)
     pageSize = Number.parseInt(pageSize)
-    // ctx.body = await Crawl.get({ uid: ctx.session.user.uid }, { sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
-    ctx.body = await Crawl.get({ uid: 'eb801c69-64ee-4b22-917f-461db528fd47' }, { fields: { result: false }, sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
+    ctx.body = await Crawl.get({ uid: ctx.session.user.uid }, { sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
+    // ctx.body = await Crawl.get({ uid: 'eb801c69-64ee-4b22-917f-461db528fd47' }, { fields: { result: false }, sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
   })
   /**
    * 更新配置

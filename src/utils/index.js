@@ -5,5 +5,6 @@ module.exports = {
   _debug: require('./debug'),
   _crypto: require('./sha'),
   _uuid: require('./uuid'),
-  _statistics: require('./statistics')
+  _statistics: require('./statistics'),
+  _isNaN: require('./isNaN')
 }
