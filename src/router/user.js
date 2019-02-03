@@ -35,7 +35,7 @@ router
         ctx.session.user = {
           uid: user.data[0].uid,
           name: user.data[0].name,
-          time: Date.now()
+          time: '' + Date.now()
         }
         ctx.body = user
       } else {
@@ -88,7 +88,7 @@ router
         ctx.session.user = {
           uid: user.data.uid,
           name: user.data.name,
-          time: Date.now()
+          time: '' + Date.now()
         }
       } else {
         _debug(`用户 ${name} 注册失败, 失败详情 ${user.data}`, true)
@@ -109,8 +109,8 @@ router
    */
   .post('/user/delete', async ctx => {
     const { name, password } = ctx.request.body
-    if (!name || !password) { ctx.body = { state: false, time: new Date(), data: '参数缺失', msg: '参数缺失' }; return }
-    if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '用户未登录', msg: '用户未登录' }; return }
+    if (!name || !password) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数缺失', msg: '参数缺失' }; return }
+    if (!ctx.session.user) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '用户未登录', msg: '用户未登录' }; return }
 
     const users = await User.get({ name })
     if (users.data[0].password !== _crypto(password)) { ctx.body = { state: false, time: new Date(), data: '验证失败', msg: '验证失败' }; return }
@@ -128,6 +128,16 @@ router
       } else {
         _debug('账户删除，相关配置删除成功')
       }
+    }
+  })
+  /**
+   * 用户登录状态查询
+   */
+  .get('/user/status', ctx => {
+    ctx.body = {
+      state: Boolean(ctx.session.user),
+      data: ctx.session.user,
+      msg: '获取登录状态'
     }
   })
 

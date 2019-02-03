@@ -15,7 +15,7 @@ router
     if (PROXY_FREQUENCY) {
       const name = `${ctx.request.url}_${ctx.request.ip.replace(/::ffff:/, '')}_proxy`
       if (await REDIS.getAsync(name)) {
-        ctx.body = { state: false, time: new Date(), data: '请求频率限制', msg: '请求频率限制' }
+        ctx.body = { state: false, time: new Date().toLocaleString(), data: '请求频率限制', msg: '请求频率限制' }
         return
       } else {
         await REDIS.setAsync(name, true)
@@ -29,7 +29,7 @@ router
     } catch (e) {
       ctx.body = {
         state: false,
-        time: new Date(),
+        time: new Date().toLocaleString(),
         data: '代理获取失败',
         msg: e
       }
@@ -37,7 +37,7 @@ router
     }
     ctx.body = {
       state: true,
-      time: new Date(),
+      time: new Date().toLocaleString(),
       data: result,
       msg: `代理获取成功,数据每${interval}秒更新一次`
     }
