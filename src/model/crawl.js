@@ -19,9 +19,10 @@ const collection = db.get('crawl')
  */
 class Crawl {
   /** 构建爬虫模型 */
-  constructor ({ cid, uid, config, interval }) {
+  constructor({ cid, uid, author, config, interval }) {
     this.cid = cid
     this.uid = uid
+    this.author = author
     this.config = config
     this.permission = false
     this.interval = interval
@@ -29,7 +30,7 @@ class Crawl {
       time: '' + Date.now(),
       value: []
     }
-    this.tag = ''
+    this.tag = []
     this.description = ''
     this.time = '' + Date.now()
   }
@@ -39,6 +40,7 @@ class Crawl {
     const crawl = {
       cid: this.cid,
       uid: this.uid,
+      author: this.author,
       config: this.config,
       permission: this.permission,
       interval: this.interval,
@@ -64,7 +66,7 @@ class Crawl {
   }
 }
 /**
- * 获取用户信息
+ * 获取爬虫信息
  * @param {object} findFlag - 根据传入的对象进行查找
  * @param {object} option - 可选的传入参数
  */
@@ -74,7 +76,7 @@ Crawl.get = (findFlag, option) => {
       state: docs.length > 0,
       time: new Date(),
       data: docs,
-      msg: docs.length > 0 ? '爬虫配置获取成功' : '爬虫配置获取失败'
+      msg: docs.length > 0 ? '爬虫配置获取成功' : '暂无爬虫配置'
     }))
     .catch(err => ({
       state: false,
@@ -85,7 +87,7 @@ Crawl.get = (findFlag, option) => {
 }
 
 /**
- * 更新用户信息
+ * 更新爬虫配置信息
  * @param {object} findFlag - 根据传入的对象进行查找
  * @param {object} newValue - 更新查找到相应字段
  */
@@ -106,7 +108,7 @@ Crawl.update = (findFlag, newValue) => {
 }
 
 /**
- * 删除用户信息
+ * 删除配置
  * @param {object} findFlag - 根据传入的对象进行查找
  */
 Crawl.delete = findFlag => {
