@@ -18,7 +18,7 @@ class User {
     this.uid = uid
     this.name = name
     this.password = password
-    this.time = Date.now()
+    this.time = '' + Date.now()
   }
 
   /**
