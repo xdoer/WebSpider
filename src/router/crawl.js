@@ -31,7 +31,7 @@ router
 
     // 参数验证
     const dataState = verification({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end })
-    if (!dataState.state) { ctx.body = { state: false, time: new Date(), data: dataState.msg, msg: '参数验证失败' }; return }
+    if (!dataState.state) { ctx.body = { state: false, time: new Date().toLocaleString(), data: dataState.msg, msg: '参数验证失败' }; return }
 
     /**
      * 分页请求模式下,构造请求链接数组
@@ -46,7 +46,7 @@ router
       const name = `${ctx.request.url}_${ctx.request.ip.replace(/::ffff:/, '')}_preview`
       // 请求频率处理
       if (await REDIS.getAsync(name)) {
-        ctx.body = { state: false, time: new Date(), data: '请求频率限制', msg: '请求频率限制' }
+        ctx.body = { state: false, time: new Date().toLocaleString(), data: '请求频率限制', msg: '请求频率限制' }
         return
       } else {
         await REDIS.setAsync(name, true)
@@ -74,14 +74,14 @@ router
 
       ctx.body = {
         state: res.state,
-        time: new Date(),
+        time: new Date().toLocaleString(),
         data: res.data,
         msg: res.state ? '抓取成功' : '抓取失败'
       }
     } catch (e) {
       ctx.body = {
         state: false,
-        time: new Date(),
+        time: new Date().toLocaleString(),
         data: '爬虫抓取数据出错',
         msg: e
       }
@@ -93,18 +93,21 @@ router
    */
   .post('/crawl/save', async ctx => {
     // 首先判断用户登录状态
-    if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '未登录', msg: '未登录' }; return }
+    if (!ctx.session.user) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '未登录', msg: '未登录' }; return }
 
     // 前端使用 axios 进行请求，使用 qs 模块格式化 post 请求数据，数字会已字符串进行传递，JSON数据会变成对象
     let { url, tags, depth = '1', form, charset = 'utf-8', proxyMode = 'none', proxies = [], mode = 'plain', start = '0', end = '0' } = ctx.request.body
 
     // 参数验证
     const dataState = verification({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end })
-    if (!dataState.state) { ctx.body = { state: false, time: new Date(), data: dataState.msg, msg: '参数验证失败' }; return }
+    if (!dataState.state) { ctx.body = { state: false, time: new Date().toLocaleString(), data: dataState.msg, msg: '参数验证失败' }; return }
+
+    form = process.env.NODE_ENV === 'test' ? form : JSON.parse(form)
 
     // 实例化一个爬虫模型对象
     const crawlConfig = new Crawl({
       uid: ctx.session.user.uid,
+      author: ctx.session.user.name,
       cid: _uuid(),
       interval: 0,
       config: { url, tags, depth: Number.parseInt(depth), form, charset, proxyMode, proxies, mode, start, end }
@@ -118,10 +121,10 @@ router
   .get('/crawl/share', async ctx => {
     const { page = 1, pageSize = 10 } = ctx.request.query
     if (_isNaN(page) || _isNaN(pageSize)) {
-      ctx.body = { state: false, time: new Date(), data: '参数错误', msg: '参数包含page,pageSize,且都为数字' }
+      ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数错误', msg: '参数包含page,pageSize,且都为数字' }
       return
     }
-    ctx.body = await Crawl.get({ permission: true }, { fields: { config: 1, interval: 1 }, sort: { time: -1 }, skip: Number.parseInt(pageSize) * Number.parseInt(page), limit: Number.parseInt(pageSize) })
+    ctx.body = await Crawl.get({ permission: true }, { fields: { "config.url": 1, interval: 1, tag: 1, description: 1, author: 1, cid: 1 }, sort: { time: -1 }, limit: Number.parseInt(pageSize), skip: Number.parseInt(pageSize) * Number.parseInt(page) })
   })
   /**
    * 获取API函数
@@ -131,20 +134,18 @@ router
    */
   .get('/crawl/api', async ctx => {
     const { user, cid } = ctx.request.query
+
     // 参数完整性
-    if (!user || !cid) { ctx.body = { state: false, time: new Date(), data: '参数不完整', msg: '请求失败' }; return }
+    if (!user || !cid) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数不完整', msg: '请求失败' }; return }
 
     // 根据参数从数据库获取数据
-    const _users = await User.get({ name: user }, { fields: { uid: 1 } })
     const _configs = await Crawl.get({ cid })
 
-    // 数据读取错误
-    if (!_users.state || !_configs.state) { ctx.body = { state: false, time: new Date(), data: '数据读取出错,请确保保存了该配置', msg: '操作失败' }; return }
-    const _user = _users.data[0]
-    let { uid, time, interval, result, config: { url, proxyMode, proxies, mode, start, end } } = _configs.data[0]
+    let { author ,time, interval, result, config: { url, proxyMode, proxies, mode, start, end } } = _configs.data[0]
+
 
     // 链接中的用户 id 和爬虫配置中的用户id不匹配
-    if (uid !== _user.uid) { ctx.body = { state: false, time: new Date(), data: '参数错误', msg: '用户名与配置ID不匹配' }; return }
+    if (user !== author) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数错误', msg: '用户名与配置ID不匹配' }; return }
 
     // API调用统计信息
     if (STATISTICS) {
@@ -156,7 +157,7 @@ router
       const name = `${ctx.request.url}_${ctx.request.ip.replace(/::ffff:/, '')}_api`
       // 请求频率处理
       if (await REDIS.getAsync(name)) {
-        ctx.body = { state: false, time: new Date(), data: '请求评率限制', msg: '请求频率限制' }
+        ctx.body = { state: false, time: new Date().toLocaleString(), data: '请求评率限制', msg: '请求频率限制' }
         return
       } else {
         await REDIS.setAsync(name, true)
@@ -168,8 +169,8 @@ router
      * 如果没配置更新(即 interval 值为0)时，且数据库中有结果数据，则直接从数据库中读取数据返回
      * 如果配置了更新,判断当前时间与数据库中的数据更新时间，值大于interval间隔，则调用爬虫，并更新数据库数据，值小于interval，则直接返回数据库数据
      */
-    if (!interval && result.value.length > 0) {
-      ctx.body = { state: true, time: new Date(Number.parseInt(result.time)), data: result.value, msg: '请求成功' }
+    if (interval === '0' && result.value.data.length > 0) {
+      ctx.body = { state: true, time: new Date(Number.parseInt(result.time)).toLocaleString(), data: result.value.data, msg: '请求成功' }
     } else {
       const t = (Date.now() - Number.parseInt(result.time)) / (1000 * 60 * 60)
       // 如果当前API请求时间大于用户配置的更新时间,则调用爬虫
@@ -190,14 +191,14 @@ router
          * 爬虫需要的参数:urls, tags, depth, form, charset, proxy
          */
         const res = await fetch(Object.assign({}, _configs.data[0].config, { proxy, urls }))
-        ctx.body = { state: res.state, time: new Date(), data: res.data, msg: res.state ? '请求成功' : '请求失败' }
+        ctx.body = { state: res.state, time: new Date().toLocaleString(), data: res.data, msg: res.state ? '请求成功' : '请求失败' }
 
         const m = await Crawl.update({ cid }, { result: { time: '' + Date.now(), value: res } })
         if (!m.state) {
           _debug('API调用,爬虫结果更新失败', true)
         }
       } else {
-        ctx.body = { state: true, time: new Date(Number.parseInt(result.time)), data: result.value, msg: '请求成功' }
+        ctx.body = { state: true, time: new Date(Number.parseInt(result.time)).toLocaleString(), data: result.value.data, msg: '请求成功' }
       }
     }
   })
@@ -205,34 +206,33 @@ router
    * 配置删除
    */
   .delete('/crawl/config', async ctx => {
-    if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '未登录', msg: '未登录' }; return }
+    if (!ctx.session.user) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '未登录', msg: '未登录' }; return }
     const { cid } = ctx.request.query
-    if (!cid) { ctx.body = { state: false, time: new Date(), data: '参数缺失', msg: '参数缺失' }; return }
+    if (!cid) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数缺失', msg: '参数缺失' }; return }
     const res = await Crawl.get({ cid })
     if (res.state) {
       ctx.body = await Crawl.delete({ cid })
     } else {
-      ctx.body = { state: false, time: new Date(), data: res.data, msg: res.msg }
+      ctx.body = { state: false, time: new Date().toLocaleString(), data: res.data, msg: res.msg }
     }
   })
   /**
    * 登录后，获取
    */
   .get('/crawl/config', async ctx => {
-    if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '未登录', msg: '未登录' }; return }
+    if (!ctx.session.user) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '未登录', msg: '未登录' }; return }
     let { page, pageSize } = ctx.request.query
     page = Number.parseInt(page)
     pageSize = Number.parseInt(pageSize)
     ctx.body = await Crawl.get({ uid: ctx.session.user.uid }, { sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
-    // ctx.body = await Crawl.get({ uid: 'eb801c69-64ee-4b22-917f-461db528fd47' }, { fields: { result: false }, sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
   })
   /**
    * 更新配置
    * API描述，标签，功能...
    */
   .post('/crawl/config', async ctx => {
-    if (!ctx.session.user) { ctx.body = { state: false, time: new Date(), data: '未登录', msg: '未登录' }; return }
-    const { cid, permission, tag, description } = ctx.request.body
+    if (!ctx.session.user) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '未登录', msg: '未登录' }; return }
+    const { cid, permission, tag, description, interval } = ctx.request.body
     const obj = {}
     if (cid) obj.cid = cid
     if (permission) {
@@ -244,10 +244,26 @@ router
     }
     if (tag) obj.tag = tag
     if (description) obj.description = description
+    if (interval) obj.interval = interval
 
-    if (!cid || !permission) { ctx.body = { state: false, time: new Date(), data: '参数缺失', msg: '参数缺失' }; return }
+    if (!cid || !permission) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数缺失', msg: '参数缺失' }; return }
 
     ctx.body = await Crawl.update({ cid }, obj)
+  })
+  /**
+   * 获取某一个标签类别的
+   */
+  .get('/crawl/tag', async ctx => {
+    const { page = 0, pageSize = 10, tag } = ctx.request.query
+    if (_isNaN(page) || _isNaN(pageSize)) {
+      ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数错误', msg: '参数包含page,pageSize,且都为数字' }
+      return
+    }
+    if (Object.prototype.toString.call(tag) !== '[object String]') {
+      ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数错误', msg: '参数tag应当为字符串' }
+      return
+    }
+    ctx.body = await Crawl.get({ tag }, { fields: { "config.url": 1, interval: 1, tag: 1, description: 1, cid: 1, author: 1 }, sort: { time: -1 }, limit: Number.parseInt(pageSize), skip: Number.parseInt(pageSize) * Number.parseInt(page) })
   })
 
 module.exports = router
