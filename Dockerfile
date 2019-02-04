@@ -2,12 +2,12 @@ FROM node
 
 MAINTAINER ThomasHan
 
-ADD . /app/
-
 WORKDIR /app
+
+ADD ./src ./static ./package.json /app/
 
 RUN npm install
 
 EXPOSE 3000
 
-CMD ["npm", "prod"]
+CMD ["npm", "start"]
