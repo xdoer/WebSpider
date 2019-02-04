@@ -3,7 +3,7 @@
  */
 
 const Router = require('koa-router')
-const { Crawl, User } = require('../model')
+const { Crawl } = require('../model')
 const { _debug, _uuid, _statistics, _isNaN } = require('../utils')
 const { STATISTICS, API: { API_FREQUENCY, PREVIEW_FREQUENCY }, REDIS } = require('../config')
 const fetch = require('../crawl')
@@ -28,8 +28,6 @@ router
   .post('/crawl/preview', async ctx => {
     // 前端使用 axios 进行请求，使用 qs 模块格式化 post 请求数据，数字会以字符串形式进行传递，JSON数据会变成对象
     let { url, tags, depth = '1', form, charset = 'utf-8', proxyMode = 'none', proxies = [], mode = 'plain', start = '0', end = '0' } = ctx.request.body
-
-    console.log(proxyMode)
 
     // 参数验证
     const dataState = verification({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end })
