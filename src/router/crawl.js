@@ -171,8 +171,8 @@ router
      * 如果没配置更新(即 interval 值为0)时，且数据库中有结果数据，则直接从数据库中读取数据返回
      * 如果配置了更新,判断当前时间与数据库中的数据更新时间，值大于interval间隔，则调用爬虫，并更新数据库数据，值小于interval，则直接返回数据库数据
      */
-    if (interval === '0' && result.value.data.length > 0) {
-      ctx.body = { state: true, time: new Date(Number.parseInt(result.time)).toLocaleString(), data: result.value.data, msg: '请求成功' }
+    if (!interval && result.value.length > 0) {
+      ctx.body = { state: true, time: new Date(Number.parseInt(result.time)).toLocaleString(), data: result.value, msg: '请求成功' }
     } else {
       const t = (Date.now() - Number.parseInt(result.time)) / (1000 * 60 * 60)
       // 如果当前API请求时间大于用户配置的更新时间,则调用爬虫
@@ -195,12 +195,12 @@ router
         const res = await fetch(Object.assign({}, _configs.data[0].config, { proxy, urls }))
         ctx.body = { state: res.state, time: new Date().toLocaleString(), data: res.data, msg: res.state ? '请求成功' : '请求失败' }
 
-        const m = await Crawl.update({ cid }, { result: { time: '' + Date.now(), value: res } })
+        const m = await Crawl.update({ cid }, { result: { time: '' + Date.now(), value: res.data } })
         if (!m.state) {
           _debug('API调用,爬虫结果更新失败', true)
         }
       } else {
-        ctx.body = { state: true, time: new Date(Number.parseInt(result.time)).toLocaleString(), data: result.value.data, msg: '请求成功' }
+        ctx.body = { state: true, time: new Date(Number.parseInt(result.time)).toLocaleString(), data: result.value, msg: '请求成功' }
       }
     }
   })
