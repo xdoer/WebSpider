@@ -1,7 +1,7 @@
 /**
  * 爬虫配置
  * DELAY 为每次请求的间隔时间,值建议为0,当值为0抓不到数据时，再往大设置该值(单位毫秒)
- * CONCURRENT 每次请求的链接个数。
+ * CONCURRENT 每次请求的链接个数。(DELAY值为0，该值有效)
  * HEADER 请求头配置
  */
 const UserAgent = [
