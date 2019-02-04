@@ -12,7 +12,11 @@ const { userRouter, crawlRouter, proxyRouter } = require('./router')
 const { SESSION } = require('./config')
 
 /** 配置静态服务根目录 */
-app.use(serve(path.resolve(__dirname, '../static')))
+if (process.env.NODE_ENV === 'dev') {
+  app.use(serve(path.resolve(__dirname, '../static/dev')))
+} else {
+  app.use(serve(path.resolve(__dirname, '../static/prod')))
+}
 
 /** 配置session */
 app.keys = ['some secret']
