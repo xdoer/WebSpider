@@ -29,6 +29,8 @@ router
     // 前端使用 axios 进行请求，使用 qs 模块格式化 post 请求数据，数字会以字符串形式进行传递，JSON数据会变成对象
     let { url, tags, depth = '1', form, charset = 'utf-8', proxyMode = 'none', proxies = [], mode = 'plain', start = '0', end = '0' } = ctx.request.body
 
+    console.log(proxyMode)
+
     // 参数验证
     const dataState = verification({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end })
     if (!dataState.state) { ctx.body = { state: false, time: new Date().toLocaleString(), data: dataState.msg, msg: '参数验证失败' }; return }
