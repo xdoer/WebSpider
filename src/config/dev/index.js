@@ -18,7 +18,6 @@ module.exports = {
   STATISTICS: false,
   API: require('./api'),
   DB: require('./db'),
-  REDIS: require('./redis'),
   SESSION: require('./session'),
   PROXY: require('./proxy'),
   CRAWL: require('./crawl')
