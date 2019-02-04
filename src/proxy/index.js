@@ -17,23 +17,26 @@ const async = require('async')
 const writeProxies = async () => {
   // 初始化写入数据
   let proxies = []
+  let flag = true
+
+  // 存在proxyFreeList相关配置
+  if (proxyFreeList) {
+    const list = await crawl(proxyFreeList)
+    if (list.state) {
+      proxies = proxies.concat(list.data)
+      flag = false
+    } else {
+      _debug(`ProxyFreeList代理获取失败,失败详情:${list.data}`)
+    }
+  }
 
   // 如果存在西刺代理的配置，则抓取西刺代理.
-  if (proxyXiCi) {
+  if (proxyXiCi && flag) {
     const xici = await crawl(proxyXiCi)
     if (xici.state) {
       proxies = proxies.concat(xici.data)
     } else {
       _debug(`西刺代理获取失败,失败详情:${xici.data}`)
-    }
-  }
-
-  if (proxyFreeList) {
-    const list = await crawl(proxyFreeList)
-    if (list.state) {
-      proxies = proxies.concat(list.data)
-    } else {
-      _debug(`ProxyFreeList代理获取失败,失败详情:${list.data}`)
     }
   }
 
