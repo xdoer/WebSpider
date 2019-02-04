@@ -13,9 +13,9 @@
  */
 
 module.exports = {
-  PORT: 3002,
-  DEBUG: true,
-  LOG: false,
+  PORT: 4000,
+  DEBUG: false,
+  LOG: true,
   STATISTICS: true,
   API: require('./api'),
   DB: require('./db'),
