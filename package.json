@@ -25,7 +25,8 @@
     "superagent": "^4.0.0",
     "superagent-charset": "^1.2.0",
     "superagent-proxy": "^2.0.0",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "redis": "^2.8.0"
   },
   "devDependencies": {
     "bluebird": "^3.5.3",
@@ -38,7 +39,6 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "mocha": "^5.2.0",
-    "redis": "^2.8.0",
     "supertest": "^3.3.0"
   }
 }
