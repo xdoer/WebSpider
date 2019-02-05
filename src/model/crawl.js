@@ -19,7 +19,7 @@ const collection = db.get('crawl')
  */
 class Crawl {
   /** 构建爬虫模型 */
-  constructor({ cid, uid, author, config, interval }) {
+  constructor ({ cid, uid, author, config, interval }) {
     this.cid = cid
     this.uid = uid
     this.author = author
