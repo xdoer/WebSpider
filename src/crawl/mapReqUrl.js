@@ -16,10 +16,11 @@ module.exports = async ({ urls, tags, depth, form, charset, proxy, tagNum }) => 
        * 当DELAY为0，则进行并发请求，并发数CONCURRENT
        */
       if (DELAY) {
+        _debug(`串行请求模式`);
         /**
          * 闭包处理延迟执行时间
          * 每次维护一个数量为CONCURRENT的队列，队列执行完毕后，再维护一个队列，直到urls请求执行完毕
-         * 这里还需要考虑有没有必要
+         * 参数可考虑交给用户配置
          */
         (t => {
           setTimeout(() => {
@@ -31,7 +32,6 @@ module.exports = async ({ urls, tags, depth, form, charset, proxy, tagNum }) => 
       }
     }, (err, res) => {
       if (err) {
-        _debug(`map请求出错，错误详情 ${err}`, true)
         reject(err)
       } else {
         resolve(res)

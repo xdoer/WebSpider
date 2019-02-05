@@ -16,7 +16,6 @@ require('superagent-proxy')(superagent)
 module.exports = async ({ url, tags, tagNum, depth = 1, form, charset = 'utf-8', proxy, fn }) => {
   const bound = (err, res) => {
     if (err) {
-      _debug(`请求出错 ${err}`, true)
       fn(err)
     } else {
       let result = [] // 返回的抓取结果
@@ -28,14 +27,14 @@ module.exports = async ({ url, tags, tagNum, depth = 1, form, charset = 'utf-8',
       // 验证用户输入，放在路由那里
       try {
         tag = eval(tags[tagNum])     // eslint-disable-line
+        _debug('标签选择器解析成功')
       } catch (e) {
-        _debug(`标签选择器解析失败,失败详情 ${e}`, true)
+        fn(`标签选择器解析失败,失败详情 ${e}`)
         return
       }
 
       tag.each((idx, element) => {
         let $element = $(element)
-
         // 根据抓取深度与标签下标的关系判断当前是要获取进入下一页的a标签，还是要获取数据
         if (depth === tagNum + 1) {
           let tempResult = {}
@@ -57,7 +56,6 @@ module.exports = async ({ url, tags, tagNum, depth = 1, form, charset = 'utf-8',
             } catch (e) {
               state = false
               errMsg = e.toString()
-              _debug(`属性选择器解析失败，失败详情 ${e}`, true)
             }
           })
           result.push(tempResult)
@@ -69,11 +67,16 @@ module.exports = async ({ url, tags, tagNum, depth = 1, form, charset = 'utf-8',
           } catch (e) {
             state = false
             errMsg = `中间级的标签选择器应为a标签选择器，以使得程序顺利解析到下一级页面。`
-            _debug(`中间页面的a标签选择器解析失败,错误详情:${e}`, true)
           }
         }
       })
-      state ? fn(null, result) : fn(errMsg)
+
+      if (state) {
+        fn(null, result)
+      } else {
+        _debug(`属性选择器解析失败,${errMsg}`, true)
+        fn(errMsg)
+      }
     }
   }
 
