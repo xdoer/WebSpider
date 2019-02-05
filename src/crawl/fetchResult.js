@@ -27,7 +27,6 @@ module.exports = async ({ url, tags, tagNum, depth = 1, form, charset = 'utf-8',
       // 验证用户输入，放在路由那里
       try {
         tag = eval(tags[tagNum])     // eslint-disable-line
-        _debug('标签选择器解析成功')
       } catch (e) {
         fn(`标签选择器解析失败,失败详情 ${e}`)
         return
