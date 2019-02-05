@@ -72,3 +72,6 @@ typings/
 # Serverless directories
 .serverless
 .DS_Store
+
+log/error
+log/running
