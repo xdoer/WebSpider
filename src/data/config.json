@@ -21,9 +21,9 @@
     "urls": ["https://free-proxy-list.net/"],
       "tags": ["$(\"#proxylisttable tr\").not($(\"#proxylisttable tr\").eq(0)).not($(\"proxylisttable tr\").eq($(\"#proxylisttable tr\").length-1))"],
       "form": {
-      "ip": "$element.children('td').eq(0).text()",
-      "port": "$element.children('td').eq(1).text()"
-    },
+        "ip": "$element.children('td').eq(0).text()",
+        "port": "$element.children('td').eq(1).text()"
+      },
     "depth": 1
   }
 }
