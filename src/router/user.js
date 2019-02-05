@@ -106,6 +106,8 @@ router
   /**
    * 删除账号操作
    * 删除账号需要验证用户名与密码
+   * @param {string} name - 用户名
+   * @param {string} password - 密码
    */
   .post('/user/delete', async ctx => {
     const { name, password } = ctx.request.body
