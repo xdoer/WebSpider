@@ -12,7 +12,7 @@
  */
 
 module.exports = {
-  PORT: 3000,
+  PORT: process.env.PORT || 3000,
   DEBUG: true,
   LOG: false,
   STATISTICS: false,

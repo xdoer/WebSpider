@@ -1,1 +1,1 @@
-web: node ./src/index.js
+web: NODE_ENV=prod node app.js
