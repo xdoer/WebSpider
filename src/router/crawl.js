@@ -82,8 +82,8 @@ router
       ctx.body = {
         state: false,
         time: new Date().toLocaleString(),
-        data: '爬虫抓取数据出错',
-        msg: e
+        data: e,
+        msg: '爬虫抓取数据出错'
       }
     }
   })
@@ -116,21 +116,23 @@ router
   })
   /**
    * 用户分享的API接口
-   * 传递的参数:page,pageSize
+   * @param {String} page 分页页码
+   * @param {String} pageSize 页面大小
    */
   .get('/crawl/share', async ctx => {
-    const { page = 1, pageSize = 10 } = ctx.request.query
+    let { page = 1, pageSize = 10 } = ctx.request.query
     if (_isNaN(page) || _isNaN(pageSize)) {
       ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数错误', msg: '参数包含page,pageSize,且都为数字' }
       return
     }
-    ctx.body = await Crawl.get({ permission: true }, { fields: { "config.url": 1, interval: 1, tag: 1, description: 1, author: 1, cid: 1 }, sort: { time: -1 }, limit: Number.parseInt(pageSize), skip: Number.parseInt(pageSize) * Number.parseInt(page) })
+    page = Number.parseInt(page)
+    pageSize = Number.parseInt(pageSize)
+    ctx.body = await Crawl.get({ permission: true }, { fields: { 'config.url': 1, interval: 1, tag: 1, description: 1, author: 1, cid: 1 }, sort: { time: -1 }, limit: pageSize, skip: pageSize * page })
   })
   /**
    * 获取API函数
-   * 提交参数有爬虫配置id
-   * 这里还涉及到数据更新的问题
-   * API调用统计,调用频率限制
+   * @param {String} user 用户名
+   * @param {String} cid 配置ID
    */
   .get('/crawl/api', async ctx => {
     const { user, cid } = ctx.request.query
@@ -141,8 +143,7 @@ router
     // 根据参数从数据库获取数据
     const _configs = await Crawl.get({ cid })
 
-    let { author ,time, interval, result, config: { url, proxyMode, proxies, mode, start, end } } = _configs.data[0]
-
+    let { author, time, interval, result, config: { url, proxyMode, proxies, mode, start, end } } = _configs.data[0]
 
     // 链接中的用户 id 和爬虫配置中的用户id不匹配
     if (user !== author) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数错误', msg: '用户名与配置ID不匹配' }; return }
@@ -204,6 +205,7 @@ router
   })
   /**
    * 配置删除
+   * @param {string} cid - 配置ID
    */
   .delete('/crawl/config', async ctx => {
     if (!ctx.session.user) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '未登录', msg: '未登录' }; return }
@@ -218,10 +220,16 @@ router
   })
   /**
    * 登录后，获取
+   * @param {String} page 分页页码
+   * @param {String} pageSize 页面大小
    */
   .get('/crawl/config', async ctx => {
     if (!ctx.session.user) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '未登录', msg: '未登录' }; return }
     let { page, pageSize } = ctx.request.query
+    if (_isNaN(page) || _isNaN(pageSize)) {
+      ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数错误', msg: '参数包含page,pageSize,且都为数字' }
+      return
+    }
     page = Number.parseInt(page)
     pageSize = Number.parseInt(pageSize)
     ctx.body = await Crawl.get({ uid: ctx.session.user.uid }, { sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
@@ -229,12 +237,18 @@ router
   /**
    * 更新配置
    * API描述，标签，功能...
+   * @param {String} cid 配置ID(必选)
+   * @param {String} permission 权限(可选)
+   * @param {Array} tag API标签(可选)
+   * @param {String} description API描述信息(可选)
+   * @param {String} interval 更新间隔(可选)
    */
   .post('/crawl/config', async ctx => {
     if (!ctx.session.user) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '未登录', msg: '未登录' }; return }
     const { cid, permission, tag, description, interval } = ctx.request.body
+    if (!cid) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数缺失', msg: '参数必须包含cid' }; return }
+
     const obj = {}
-    if (cid) obj.cid = cid
     if (permission) {
       if (permission === 'true' || permission === 'false') {
         obj.permission = permission === 'true'
@@ -244,14 +258,15 @@ router
     }
     if (tag) obj.tag = tag
     if (description) obj.description = description
-    if (interval) obj.interval = interval
-
-    if (!cid || !permission) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数缺失', msg: '参数缺失' }; return }
+    if (interval) obj.interval = _isNaN(interval) ? 0 : Number.parseInt(interval)
 
     ctx.body = await Crawl.update({ cid }, obj)
   })
   /**
    * 获取某一个标签类别的
+   * @param {String} page 分页页码
+   * @param {String} pageSize 页面大小
+   * @param {String} tag API标签
    */
   .get('/crawl/tag', async ctx => {
     const { page = 0, pageSize = 10, tag } = ctx.request.query
@@ -263,7 +278,7 @@ router
       ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数错误', msg: '参数tag应当为字符串' }
       return
     }
-    ctx.body = await Crawl.get({ tag }, { fields: { "config.url": 1, interval: 1, tag: 1, description: 1, cid: 1, author: 1 }, sort: { time: -1 }, limit: Number.parseInt(pageSize), skip: Number.parseInt(pageSize) * Number.parseInt(page) })
+    ctx.body = await Crawl.get({ tag }, { fields: { 'config.url': 1, interval: 1, tag: 1, description: 1, cid: 1, author: 1 }, sort: { time: -1 }, limit: Number.parseInt(pageSize), skip: Number.parseInt(pageSize) * Number.parseInt(page) })
   })
 
 module.exports = router
