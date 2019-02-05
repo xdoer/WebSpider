@@ -2,7 +2,7 @@
  * 参数验证模块
  * 提交的参数需要进行验证
  */
-const { _filter: { filterEval, filterUrl }, _debug } = require('../../utils')
+const { _filter: { isInvalidEval, isInvalidUrl }, _debug, _isNaN } = require('../../utils')
 
 module.exports = ({ url, tags, depth, form, charset, proxyMode, proxies, mode, start, end }) => {
   const isType = Object.prototype.toString
@@ -25,21 +25,8 @@ module.exports = ({ url, tags, depth, form, charset, proxyMode, proxies, mode, s
     }
   }
 
-  // 判断是否为JSON
-  if (typeof form === 'string') {
-    try {
-      JSON.parse(form)
-    } catch (e) {
-      return {
-        state: false,
-        msg: 'form 不是 JSON 类型'
-      }
-    }
-  }
-
   // 数据校验
-  const isInvalid = n => Number.isNaN(Number.parseInt(n))
-  if ([depth, start, end].some(n => isInvalid(n))) {
+  if ([depth, start, end].some(n => _isNaN(n))) {
     _debug(`depth/start/end/应当可以转化为 Number 类型且不为NaN`, true)
     return {
       state: false,
@@ -67,7 +54,7 @@ module.exports = ({ url, tags, depth, form, charset, proxyMode, proxies, mode, s
    * 代理检测
    * 如果存在代理，则提交的代理必须是数组形式，并且每个代理都符合正确的形式
    */
-  if (proxies.some(n => !filterUrl(n))) {
+  if (proxies.some(n => !isInvalidUrl(n))) {
     _debug(`代理输入错误`, true)
     return {
       state: false,
@@ -79,24 +66,37 @@ module.exports = ({ url, tags, depth, form, charset, proxyMode, proxies, mode, s
    * '输出格式'检测
    * 前端检测JSON格式数据，经 QS 模块 post 传递到后端变成对象形式。再分别检测各个字段中是否存在敏感内容
    */
-  if (Object.values(form).some(n => filterEval(n))) {
+
+  let _form
+  try {
+    _form = process.env.NODE_ENV === 'test' ? form : JSON.parse(form)
+  } catch (e) {
+    _debug(`代理输入错误`, true)
+    return {
+      state: false,
+      msg: '"输出格式"填写有误'
+    }
+  }
+
+  if (Object.values(_form).some(n => isInvalidEval(n))) {
     _debug('form 数据中存在被过滤的关键字', true)
     return {
       state: false,
-      msg: 'form 数据中存在被过滤的关键字'
+      msg: '"输出格式"中存在被过滤的关键字'
     }
   }
 
   /**
    * 过滤标签选择器
    */
-  if (tags.some(n => filterEval(n))) {
+  if (tags.some(n => isInvalidEval(n))) {
     _debug(`tags 标签选择器中存在被过滤的关键字`, true)
     return {
       state: false,
-      msg: 'tags 标签选择器中存在被过滤的关键字'
+      msg: '标签选择器中存在被过滤的关键字'
     }
   }
+
   return {
     state: true,
     msg: '数据校验成功'
