@@ -3,22 +3,24 @@
  */
 
 const regList = [
-  /import/i,
+  /import\s/i,
   /require/i,
-  /export/i,
+  /export\s/i,
   /var\s/i,
-  /promise/i,
   /const\s/i,
   /let\s/i,
+  /promise/i,
   /console/i,
   /eval/i,
   /new\s/i,
-  /Function/i,
+  /function/i,
   /superagent/i,
-  /cheerio/i
+  /cheerio/i,
+  /_debug/i,
+  /[;|!|]/
 ]
 
 module.exports = {
-  filterEval: m => regList.some(n => n.test(m)),
-  filterUrl: m => /^http:\/\/((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?):\d{2,5}/g.test(m)
+  isInvalidEval: m => regList.some(n => n.test(m)),
+  isInvalidUrl: m => /^http:\/\/((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?):\d{2,5}/g.test(m)
 }
