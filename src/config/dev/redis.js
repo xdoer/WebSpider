@@ -1,5 +1,3 @@
-
-
 /**
  * redis配置项
  * 更多配置项参考:https://www.npmjs.com/package/redis

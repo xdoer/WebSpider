@@ -14,7 +14,6 @@ client.on('error', err => {
   console.log('Redis出错', err)
 })
 
-
 module.exports = {
   ..._env === 'dev' ? dev : _env === 'prod' ? prod : test,
   REDIS: client
