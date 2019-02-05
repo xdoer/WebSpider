@@ -28,6 +28,7 @@ app.use(bodyParser())
 /**
  * 解决跨域问题
  * 允许任意来源的访问,以调用生成的配置接口
+ * 如果要前端面板文件需要由 Nginx、Tomcat等分发，则取消下面响应头的注释
  */
 app.use(async (ctx, next) => {
   ctx.set({
