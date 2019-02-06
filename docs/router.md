@@ -8,26 +8,38 @@
 
 ### 用户注册
 接口地址: `/user/register`
+
 请求方式: POST
+
 传递参数: name, password, repeatPassword
+
 参数类型: 字符串
+
 其他: name字段要求长度大于3，password字段长度大于6
 
 ### 用户登录
 接口地址: `/user/login`
+
 请求方式: POST
+
 传递参数: name, password
+
 参数类型: 字符串
+
 其他: name字段要求长度大于3，password字段长度大于6
 
 ### 账号注销
 接口地址: `/user/logout`
+
 请求方式: GET
 
 ### 账号删除
 接口地址: `/user/delete`
+
 请求方式: POST
+
 传递参数: name, password
+
 参数类型: 字符串
 
 ## 爬虫路由
@@ -35,50 +47,67 @@
 
 ### 结果预览
 接口地址: `/crawl/preview`
+
 请求方式: POST
+
 传递参数: url(字符串)、tags(数组)、depth(字符串)、form(JSON)、charset(字符串)、proxyMode(字符串)、proxies(数组)、mode(字符串)、start(字符串)、end(字符串)
 
 ### 配置保存(登录)
 接口地址: `/crawl/save`
+
 请求方式: POST
+
 传递参数: url(字符串)、tags(数组)、depth(字符串)、form(JSON)、charset(字符串)、proxyMode(字符串)、proxies(数组)、mode(字符串)、start(字符串)、end(字符串)
 
 ### 配置共享
 接口地址: `/crawl/share`
+
 请求方式: GET
+
 传递参数: page,pageSize
+
 参数类型: 字符串
 
 ### API调用
 接口地址: `/crawl/api`
+
 请求方式: GET
+
 传递参数: user、cid
+
 参数类型: 字符串
 
 ### 配置删除(登录)
 接口地址: `/crawl/delete`
+
 请求方式: DELETE
+
 传递参数: cid
+
 参数类型: 字符串
 
 ### 配置获取(登录)
 接口地址: `/crawl/config`
+
 请求方式: GET
+
 传递参数: page、pageSize
+
 参数类型: 字符串
 
 ### 配置更新(登录)
 接口地址: `/crawl/config`
+
 请求方式: POST
+
 传递参数: cid, permission, tag, description, interval
+
 参数类型: 字符串
 
 ## 代理路由
 接口地址: `/proxy`
+
 请求方式: GET
-
-**注意: 接口调用示例在/test/router.test.js中**
-
 
 ## 接口返回
 接口返回格式
@@ -96,3 +125,5 @@
 API调用返回中 ***time*** 表示最近更新该API结果数据的时间
 
 其他接口调用返回中 ***time*** 表示请求时间
+
+**接口调用示例在/test/router.test.js中**
