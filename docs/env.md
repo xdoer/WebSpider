@@ -29,4 +29,4 @@
 
 相关配置文件在:`/src/config/test/index.js`
 
-如果要使用 `node app.js` 启动程序时，默认是开发环境，切换其他环境需要指定`NODE_NEV`。
+如果要使用 `node app.js` 启动程序时，需要指定`NODE_NEV`。
