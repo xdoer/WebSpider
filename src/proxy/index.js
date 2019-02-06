@@ -59,7 +59,7 @@ const writeProxies = async () => {
       if (err) {
         _debug(`代理检测出错，错误详情${err}`)
       }
-      resolve([...new Set(res)].filter(n => n !== '' && isInvalidUrl(n)))
+      resolve([...new Set(res)].filter(n => n !== '' || !isInvalidUrl(n)))
     })
   })
 

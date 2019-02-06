@@ -22,5 +22,5 @@ const regList = [
 
 module.exports = {
   isInvalidEval: m => regList.some(n => n.test(m)),
-  isInvalidUrl: m => /^http:\/\/((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?):\d{2,5}/g.test(m)
+  isInvalidUrl: m => !(/^http:\/\/((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?):\d{2,5}/g.test(m))
 }
