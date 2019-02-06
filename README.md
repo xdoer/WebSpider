@@ -232,7 +232,7 @@ CNode的分页网址
 
 更多选择器填写规则，参考[cheerio](https://www.npmjs.com/package/cheerio)。
 
-### 7.输出格式。 
+### 7.输出格式
 
 输出格式指的是输出哪些结果。
 
