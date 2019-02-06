@@ -6,7 +6,7 @@
 const { PROXY: { proxy, interval, timeout }, REDIS } = require('../config')
 const { proxyXiCi, proxyFreeList } = require('../data/config')
 const crawl = require('../crawl')
-const { _debug, _filter: { filterUrl } } = require('../utils')
+const { _debug, _filter: { isInvalidUrl } } = require('../utils')
 const superagent = require('superagent')
 require('superagent-proxy')(superagent)
 const async = require('async')
@@ -59,7 +59,7 @@ const writeProxies = async () => {
       if (err) {
         _debug(`代理检测出错，错误详情${err}`)
       }
-      resolve([...new Set(res)].filter(n => n !== '' && filterUrl(n)))
+      resolve([...new Set(res)].filter(n => n !== '' && isInvalidUrl(n)))
     })
   })
 
