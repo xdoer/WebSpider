@@ -26,7 +26,7 @@ const writeProxies = async () => {
       proxies = proxies.concat(list.data)
       flag = false
     } else {
-      _debug(`ProxyFreeList代理获取失败,失败详情:${list.data}`)
+      _debug(`ProxyFreeList代理获取失败,失败详情:${list.data}`, true)
     }
   }
 
