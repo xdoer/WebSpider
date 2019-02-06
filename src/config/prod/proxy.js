@@ -7,6 +7,6 @@
  */
 module.exports = {
   timeout: 1000,
-  interval: 5 * 60 * 60,
+  interval: 1 * 60 * 60,
   proxy: []
 }
