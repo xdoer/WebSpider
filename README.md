@@ -272,7 +272,7 @@ CNode的分页网址
 
 二级选择器:`$(".topic .content .c-9 .ml-20 a")`
 
-'输出格式'可以这样写
+'输出格式'可以这样写
 ```
 {
     "name":"$element.text()"
