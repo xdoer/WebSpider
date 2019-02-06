@@ -15,7 +15,7 @@
 >* 默认开启了 log 功能, 应用运行状态，错误将输出到日志文件。
 >* 默认开启API请求频率限制,时间为1秒
 >* 数据库名为 crawlProd
->* 开启端口 3002
+>* 开启端口 4000
 >* 启动命令 `npm run prod`
 
 相关配置文件在:`/src/config/prod/index.js`
@@ -29,4 +29,4 @@
 
 相关配置文件在:`/src/config/test/index.js`
 
-如果要使用 `node app.js` 启动程序时，默认是开发环境，切换其他环境需要指定`NODE_NEV`。
+如果要使用 `node app.js` 启动程序时，需要指定`NODE_NEV`。
