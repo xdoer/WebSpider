@@ -48,13 +48,13 @@ class Statistics {
     return collection.insert(statistics)
       .then(docs => ({
         state: true,
-        time: new Date(),
+        time: new Date().toLocaleString(),
         data: docs,
         msg: 'API调用统计初始化成功'
       }))
       .catch(err => ({
         state: false,
-        time: new Date(),
+        time: new Date().toLocaleString(),
         data: err,
         msg: 'API调用统计初始化失败'
       }))
@@ -65,13 +65,13 @@ Statistics.get = (findFlag, option) => {
   return collection.find(findFlag, option)
     .then(docs => ({
       state: docs.length > 0,
-      time: new Date(),
+      time: new Date().toLocaleString(),
       data: docs,
       msg: docs.length > 0 ? '爬虫配置获取成功' : '爬虫配置获取失败'
     }))
     .catch(err => ({
       state: false,
-      time: new Date(),
+      time: new Date().toLocaleString(),
       data: err,
       msg: '爬虫配置获取失败'
     }))
@@ -81,13 +81,13 @@ Statistics.update = (findFlag, newValue) => {
   return collection.update(findFlag, { $set: newValue })
     .then(docs => ({
       state: docs.n === 1 && docs.nModified === 1 && docs.ok === 1,
-      time: new Date(),
+      time: new Date().toLocaleString(),
       data: docs,
       msg: docs.n === 1 && docs.nModified === 1 && docs.ok === 1 ? 'API调用统计信息更新成功' : 'API调用统计信息更新失败'
     }))
     .catch((err) => ({
       state: false,
-      time: new Date(),
+      time: new Date().toLocaleString(),
       data: err,
       msg: 'API调用统计信息更新失败'
     }))
@@ -99,7 +99,7 @@ Statistics.delete = findFlag => {
       () => {
         return collection.find(findFlag).then(docs => ({
           state: docs.length === 0,
-          time: new Date(),
+          time: new Date().toLocaleString(),
           data: docs.length > 0 ? 'API调用统计信息删除失败' : 'API调用统计信息删除成功',
           msg: docs.length > 0 ? 'API调用统计信息删除失败' : 'API调用统计信息删除成功'
         })).catch(err => err)
@@ -107,7 +107,7 @@ Statistics.delete = findFlag => {
     )
     .catch(err => ({
       state: false,
-      time: new Date(),
+      time: new Date().toLocaleString(),
       data: err,
       msg: 'API调用统计信息删除失败'
     }))

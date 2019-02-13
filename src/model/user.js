@@ -34,13 +34,13 @@ class User {
     return collection.insert(user)
       .then(docs => ({
         state: true,
-        time: new Date(),
+        time: new Date().toLocaleString(),
         data: docs,
         msg: '用户信息配置保存成功'
       }))
       .catch(err => ({
         state: false,
-        time: new Date(),
+        time: new Date().toLocaleString(),
         data: err,
         msg: '用户信息配置保存失败'
       }))
@@ -56,13 +56,13 @@ User.get = (findFlag, option) => {
   return collection.find(findFlag, option)
     .then(docs => ({
       state: docs.length > 0,
-      time: new Date(),
+      time: new Date().toLocaleString(),
       data: docs,
       msg: docs.length > 0 ? '用户信息获取成功' : '用户信息获取失败'
     }))
     .catch(err => ({
       state: false,
-      time: new Date(),
+      time: new Date().toLocaleString(),
       data: err,
       msg: '用户信息获取失败'
     }))
@@ -77,13 +77,13 @@ User.update = (findFlag, newValue) => {
   return collection.update(findFlag, { $set: newValue })
     .then(docs => ({
       state: docs.n === 1 && docs.nModified === 1 && docs.ok === 1,
-      time: new Date(),
+      time: new Date().toLocaleString(),
       data: docs,
       msg: docs.n === 1 && docs.nModified === 1 && docs.ok === 1 ? '用户信息更新成功' : '用户信息更新失败'
     }))
     .catch((err) => ({
       state: false,
-      time: new Date(),
+      time: new Date().toLocaleString(),
       data: err,
       msg: '用户信息更新失败'
     }))
@@ -106,7 +106,7 @@ User.delete = findFlag => {
       () => {
         return collection.find(findFlag).then(docs => ({
           state: docs.length === 0,
-          time: new Date(),
+          time: new Date().toLocaleString(),
           data: docs.length > 0 ? '用户信息删除失败' : '用户信息删除成功',
           msg: docs.length > 0 ? '用户信息删除失败' : '用户信息删除成功'
         })).catch(err => err)
@@ -114,7 +114,7 @@ User.delete = findFlag => {
     )
     .catch(err => ({
       state: false,
-      time: new Date(),
+      time: new Date().toLocaleString(),
       data: err,
       msg: '用户信息删除失败'
     }))

@@ -18,7 +18,7 @@ router
     if (!name || !password || name.toString().length < 3 || password.toString().length < 6) {
       ctx.body = {
         state: false,
-        time: new Date(),
+        time: new Date().toLocaleString(),
         data: '参数缺失/昵称长度不够/密码长度不够',
         msg: '参数缺失/昵称长度不够/密码长度不够'
       }
@@ -42,7 +42,7 @@ router
         _debug(`用户 ${name} 密码错误`, true)
         ctx.body = {
           state: false,
-          time: new Date(),
+          time: new Date().toLocaleString(),
           data: '用户名或密码不匹配',
           msg: '用户名或密码不匹配'
         }
@@ -62,7 +62,7 @@ router
     if (!name || !password || !repeatPassword || password !== repeatPassword || password.toString().length < 6 || name.toString().length < 3) {
       ctx.body = {
         state: false,
-        time: new Date(),
+        time: new Date().toLocaleString(),
         data: '参数缺失/密码不匹配/密码长度不够/昵称长度不够',
         msg: '参数缺失/密码不匹配/密码长度不够/昵称长度不够'
       }
@@ -73,7 +73,7 @@ router
       _debug(`用户名 ${name} 已存在`, true)
       ctx.body = {
         state: false,
-        time: new Date(),
+        time: new Date().toLocaleString(),
         data: `用户名 ${name} 已存在`,
         msg: `用户名 ${name} 已存在`
       }
@@ -101,7 +101,7 @@ router
    */
   .get('/user/logout', async ctx => {
     ctx.session.user = null
-    ctx.body = { state: true, time: new Date(), data: '用户注销成功', msg: '用户注销成功' }
+    ctx.body = { state: true, time: new Date().toLocaleString(), data: '用户注销成功', msg: '用户注销成功' }
   })
   /**
    * 删除账号操作
@@ -115,7 +115,7 @@ router
     if (!ctx.session.user) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '用户未登录', msg: '用户未登录' }; return }
 
     const users = await User.get({ name })
-    if (users.data[0].password !== _crypto(password)) { ctx.body = { state: false, time: new Date(), data: '验证失败', msg: '验证失败' }; return }
+    if (users.data[0].password !== _crypto(password)) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '验证失败', msg: '验证失败' }; return }
 
     const res = await User.delete({ name })
     if (res.state) {
