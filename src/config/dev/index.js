@@ -15,7 +15,7 @@ module.exports = {
   PORT: process.env.PORT || 3000,
   DEBUG: true,
   LOG: false,
-  STATISTICS: false,
+  STATISTICS: true,
   API: require('./api'),
   DB: require('./db'),
   SESSION: require('./session'),
