@@ -8,7 +8,7 @@ const bodyParser = require('koa-bodyparser')
 const path = require('path')
 const app = new Koa()
 
-const { userRouter, crawlRouter, proxyRouter } = require('./router')
+const { userRouter, crawlRouter, proxyRouter, statisticsRouter } = require('./router')
 const { SESSION } = require('./config')
 
 /** 配置静态服务根目录 */
@@ -32,8 +32,8 @@ app.use(bodyParser())
  */
 app.use(async (ctx, next) => {
   ctx.set({
-    // 'Access-Control-Allow-Credentials': true,
-    // 'Access-Control-Allow-Origin': ctx.request.header.origin,
+    'Access-Control-Allow-Credentials': true,
+    'Access-Control-Allow-Origin': ctx.request.header.origin,
     'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,DELETE'
   })
   await next()
@@ -43,5 +43,6 @@ app.use(async (ctx, next) => {
 app.use(userRouter.routes()).use(userRouter.allowedMethods())
 app.use(crawlRouter.routes()).use(crawlRouter.allowedMethods())
 app.use(proxyRouter.routes()).use(userRouter.allowedMethods())
+app.use(statisticsRouter.routes()).use(statisticsRouter.allowedMethods())
 
 module.exports = app
