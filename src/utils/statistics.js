@@ -32,18 +32,18 @@ module.exports = async ({ path, cid, time = Date.now() }) => {
               // 在当前月中找到了当天
               if (_day.day === day) {
                 __flag = true
-                _day.data.push(formatTime(t))
+                _day.data.unshift(formatTime(t))
               }
             })
             // 如果当前月中没有找到当天,则将当天存入当月
-            __flag || _month.data.push({ day, data: [formatTime(t)] })
+            __flag || _month.data.unshift({ day, data: [formatTime(t)] })
           }
-          _flag || _year.data.push({ month, data: [{ day, data: [formatTime(t)] }] })
+          _flag || _year.data.unshift({ month, data: [{ day, data: [formatTime(t)] }] })
         })
       }
       return _year
     })
-    flag || history.push({ year, data: [{ month, data: [{ day, data: [formatTime(t)] }] }] })
+    flag || history.unshift({ year, data: [{ month, data: [{ day, data: [formatTime(t)] }] }] })
     const res = await Statistics.update({ url: path }, { count: ++count, history })
     if (!res.state) {
       _debug('统计信息更新出错', true)
