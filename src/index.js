@@ -12,11 +12,13 @@ const { userRouter, crawlRouter, proxyRouter, statisticsRouter } = require('./ro
 const { SESSION } = require('./config')
 
 /** 配置静态服务根目录 */
-if (process.env.NODE_ENV === 'dev') {
-  app.use(serve(path.resolve(__dirname, '../static/dev')))
-} else {
-  app.use(serve(path.resolve(__dirname, '../static/prod')))
-}
+// if (process.env.NODE_ENV === 'dev') {
+//   app.use(serve(path.resolve(__dirname, '../static/dev')))
+// } else {
+//   app.use(serve(path.resolve(__dirname, '../static/prod')))
+// }
+
+app.use(serve(path.resolve(__dirname, '../static')))
 
 /** 配置session */
 app.keys = ['some secret']
@@ -28,16 +30,16 @@ app.use(bodyParser())
 /**
  * 解决跨域问题
  * 允许任意来源的访问,以调用生成的配置接口
- * 如果要前端面板文件需要由 Nginx、Tomcat等分发，则取消下面响应头的注释
+ * 如果要前端面板文件需要由 Nginx、Tomcat等分发，则取消下面配置响应头的注释
  */
-app.use(async (ctx, next) => {
-  ctx.set({
-    'Access-Control-Allow-Credentials': true,
-    'Access-Control-Allow-Origin': ctx.request.header.origin,
-    'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,DELETE'
-  })
-  await next()
-})
+// app.use(async (ctx, next) => {
+//   ctx.set({
+//     'Access-Control-Allow-Credentials': true,
+//     'Access-Control-Allow-Origin': ctx.request.header.origin,
+//     'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,DELETE'
+//   })
+//   await next()
+// })
 
 /** 应用路由 */
 app.use(userRouter.routes()).use(userRouter.allowedMethods())
