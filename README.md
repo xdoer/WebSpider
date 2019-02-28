@@ -431,7 +431,7 @@ https://spider.docmobile.cn/
 - [x] JSONP调用支持
 - [x] 前后端分离,[WebSpiderPanel](https://github.com/LuckyHH/WebSpiderPanel)
 - [ ] 超级用户后台管理面板
-- [ ] 普通用户信息管理，查看自己API调用情况
+- [x] 普通用户信息管理，查看自己API调用情况
 
 ## 协议
 

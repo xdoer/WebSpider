@@ -67,13 +67,13 @@ Statistics.get = (findFlag, option) => {
       state: docs.length > 0,
       time: new Date().toLocaleString(),
       data: docs,
-      msg: docs.length > 0 ? '爬虫配置获取成功' : '爬虫配置获取失败'
+      msg: docs.length > 0 ? '获取成功' : '无数据或获取失败'
     }))
     .catch(err => ({
       state: false,
       time: new Date().toLocaleString(),
       data: err,
-      msg: '爬虫配置获取失败'
+      msg: '获取失败'
     }))
 }
 
