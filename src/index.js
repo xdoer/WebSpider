@@ -18,7 +18,10 @@ const { SESSION } = require('./config')
 //   app.use(serve(path.resolve(__dirname, '../static/prod')))
 // }
 
-app.use(serve(path.resolve(__dirname, '../static')))
+// 配置每30天更新一次缓存
+app.use(serve(path.resolve(__dirname, '../static'), {
+  maxage: 1000 * 60 * 60 * 24 * 30
+}))
 
 /** 配置session */
 app.keys = ['some secret']
@@ -36,7 +39,7 @@ app.use(bodyParser())
 //   ctx.set({
 //     'Access-Control-Allow-Credentials': true,
 //     'Access-Control-Allow-Origin': ctx.request.header.origin,
-//     'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,DELETE'
+//     'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,DELETE',
 //   })
 //   await next()
 // })
