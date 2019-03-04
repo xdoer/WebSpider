@@ -3,7 +3,7 @@
  */
 const Router = require('koa-router')
 const { User, Crawl } = require('../model')
-const { _debug, _crypto, _uuid } = require('../utils')
+const { _debug, _crypto, _uuid, _filter: { isInvalidParam } } = require('../utils')
 const router = new Router()
 
 router
@@ -15,12 +15,12 @@ router
    */
   .post('/user/login', async ctx => {
     const { name, password } = ctx.request.body
-    if (!name || !password || name.toString().length < 3 || password.toString().length < 6) {
+    if (!name || !password || name.toString().length < 3 || password.toString().length < 6 || name.toString().length > 10 || password.toString().length > 20 || isInvalidParam(name) || isInvalidParam(password)) {
       ctx.body = {
         state: false,
         time: new Date().toLocaleString(),
-        data: '参数缺失/昵称长度不够/密码长度不够',
-        msg: '参数缺失/昵称长度不够/密码长度不够'
+        data: '参数缺失/昵称长度不够或过长/密码长度不够或过长',
+        msg: '参数缺失/昵称长度不够或过长/密码长度不够或过长'
       }
       return
     }
@@ -59,12 +59,12 @@ router
   .post('/user/register', async ctx => {
     const { name, password, repeatPassword } = ctx.request.body
     /** 检测出参数有误，直接返回 */
-    if (!name || !password || !repeatPassword || password !== repeatPassword || password.toString().length < 6 || name.toString().length < 3) {
+    if (!name || !password || !repeatPassword || password !== repeatPassword || password.toString().length < 6 || password.toString().length > 20 || name.toString().length < 3 || name.toString().length > 10 || isInvalidParam(name) || isInvalidParam(password)) {
       ctx.body = {
         state: false,
         time: new Date().toLocaleString(),
-        data: '参数缺失/密码不匹配/密码长度不够/昵称长度不够',
-        msg: '参数缺失/密码不匹配/密码长度不够/昵称长度不够'
+        data: '参数缺失/密码不匹配/密码长度不够或过长/昵称长度不够或过长',
+        msg: '参数缺失/密码不匹配/密码长度不够或过长/昵称长度不够或过长'
       }
       return
     }
@@ -111,7 +111,7 @@ router
    */
   .post('/user/delete', async ctx => {
     const { name, password } = ctx.request.body
-    if (!name || !password) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数缺失', msg: '参数缺失' }; return }
+    if (!name || !password || isInvalidParam(name) || isInvalidParam(password)) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数缺失', msg: '参数缺失' }; return }
     if (!ctx.session.user) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '用户未登录', msg: '用户未登录' }; return }
 
     const users = await User.get({ name })

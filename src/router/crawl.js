@@ -4,7 +4,7 @@
 
 const Router = require('koa-router')
 const { Crawl } = require('../model')
-const { _debug, _uuid, _statistics, _isNaN } = require('../utils')
+const { _debug, _uuid, _statistics, _isNaN, _filter } = require('../utils')
 const { STATISTICS, API: { API_FREQUENCY, PREVIEW_FREQUENCY }, REDIS } = require('../config')
 const fetch = require('../crawl')
 const getProxies = require('../proxy')
@@ -138,7 +138,7 @@ router
     const { user, cid } = ctx.request.query
 
     // 参数完整性
-    if (!user || !cid) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数不完整', msg: '请求失败' }; return }
+    if (!user || !cid || _filter.isInvalidParam(user) || _filter.isInvalidParam(cid)) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数不完整', msg: '请求失败' }; return }
 
     // 根据参数从数据库获取数据
     const _configs = await Crawl.get({ cid })
@@ -210,7 +210,7 @@ router
   .delete('/crawl/config', async ctx => {
     if (!ctx.session.user) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '未登录', msg: '未登录' }; return }
     const { cid } = ctx.request.query
-    if (!cid) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数缺失', msg: '参数缺失' }; return }
+    if (!cid || _filter.isInvalidParam(cid)) { ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数缺失', msg: '参数缺失' }; return }
     const res = await Crawl.get({ cid })
     if (res.state) {
       ctx.body = await Crawl.delete({ cid })
@@ -250,15 +250,11 @@ router
 
     const obj = {}
     if (permission) {
-      if (permission === 'true' || permission === 'false') {
-        obj.permission = permission === 'true'
-      } else {
-        obj.permission = false
-      }
+      obj.permission = permission === 'true' || false
     }
-    if (tag) obj.tag = tag
-    if (description) obj.description = description
-    if (interval) obj.interval = _isNaN(interval) ? 0 : Number.parseInt(interval)
+    if (tag && !_filter.isInvalidParam(tag)) obj.tag = tag
+    if (description && !_filter.isInvalidParam(description)) obj.description = description
+    if (interval && !_filter.isInvalidParam(interval)) obj.interval = _isNaN(interval) ? 0 : Number.parseInt(interval)
 
     ctx.body = await Crawl.update({ cid }, obj)
   })
@@ -274,8 +270,8 @@ router
       ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数错误', msg: '参数包含page,pageSize,且都为数字' }
       return
     }
-    if (Object.prototype.toString.call(tag) !== '[object String]') {
-      ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数错误', msg: '参数tag应当为字符串' }
+    if (Object.prototype.toString.call(tag) !== '[object String]' && _filter.isInvalidParam(tag)) {
+      ctx.body = { state: false, time: new Date().toLocaleString(), data: '参数错误', msg: '参数tag应当为字符串且不含敏感关键字' }
       return
     }
     ctx.body = await Crawl.get({ tag }, { fields: { 'config.url': 1, interval: 1, tag: 1, description: 1, cid: 1, author: 1 }, sort: { time: -1 }, limit: Number.parseInt(pageSize), skip: Number.parseInt(pageSize) * Number.parseInt(page) })
