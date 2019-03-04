@@ -15,6 +15,8 @@ WebSpider在线爬虫系统采用了前后端分离设计。本文档将对前�
 >* 更新日志: 在线爬虫更新日志模块
 
 ## 其他
-`/static/[dev/prod]`目录中内置了打包后的面板文件。因为系统采用开发和生产的两种不同环境,采用了两个域,因而前端需要打包两个不同的版本，才能在不同环境下顺利的请求到服务器数据。
+~~`/static/[dev/prod]`目录中内置了打包后的面板文件。因为系统采用开发和生产的两种不同环境,采用了两个域,因而前端需要打包两个不同的版本，才能在不同环境下顺利的请求到服务器数据。~~
 
-如果需要将程序部署到实际生产环境，请先到[WebSpiderPanel](https://github.com/LuckyHH/WebSpliderPanel)克隆面板文件,修改`/src/config/index.js`文件中的参数，保存后打包，用新生成的`/dist`中的文件替换本项目`/static/prod`中文件即可。
+请先到[WebSpiderPanel](https://github.com/LuckyHH/WebSpliderPanel)下载静态资源文件,用新生成的`/dist`中的文件替换本项目`/static`中的文件即可。
+
+如果要由 Nginx, Tomcat 等分发前端代码文件，请修改`/src/config/index.js`文件中的参数，保存后再进行打包。
