@@ -64,71 +64,71 @@ class Crawl {
         msg: '爬虫配置保存失败'
       }))
   }
-}
-/**
- * 获取爬虫信息
- * @param {object} findFlag - 根据传入的对象进行查找
- * @param {object} option - 可选的传入参数
- */
-Crawl.get = (findFlag, option) => {
-  return collection.find(findFlag, option)
-    .then(docs => ({
-      state: docs.length > 0,
-      time: new Date().toLocaleString(),
-      data: docs,
-      msg: docs.length > 0 ? '爬虫配置获取成功' : '暂无爬虫配置'
-    }))
-    .catch(err => ({
-      state: false,
-      time: new Date().toLocaleString(),
-      data: err,
-      msg: '爬虫配置获取失败'
-    }))
-}
 
-/**
- * 更新爬虫配置信息
- * @param {object} findFlag - 根据传入的对象进行查找
- * @param {object} newValue - 更新查找到相应字段
- */
-Crawl.update = (findFlag, newValue) => {
-  return collection.update(findFlag, { $set: newValue })
-    .then(docs => ({
-      state: docs.n === 1 && docs.nModified === 1 && docs.ok === 1,
-      time: new Date().toLocaleString(),
-      data: docs,
-      msg: docs.n === 1 && docs.nModified === 1 && docs.ok === 1 ? '爬虫配置更新成功' : '爬虫配置更新失败'
-    }))
-    .catch((err) => ({
-      state: false,
-      time: new Date().toLocaleString(),
-      data: err,
-      msg: '爬虫配置更新失败'
-    }))
-}
+  /**
+   * 获取爬虫信息
+   * @param {object} findFlag - 根据传入的对象进行查找
+   * @param {object} option - 可选的传入参数
+   */
+  static get (findFlag, option) {
+    return collection.find(findFlag, option)
+      .then(docs => ({
+        state: docs.length > 0,
+        time: new Date().toLocaleString(),
+        data: docs,
+        msg: docs.length > 0 ? '爬虫配置获取成功' : '暂无爬虫配置'
+      }))
+      .catch(err => ({
+        state: false,
+        time: new Date().toLocaleString(),
+        data: err,
+        msg: '爬虫配置获取失败'
+      }))
+  }
+  /**
+   * 更新爬虫配置信息
+   * @param {object} findFlag - 根据传入的对象进行查找
+   * @param {object} newValue - 更新查找到相应字段
+   */
+  static update (findFlag, newValue) {
+    return collection.update(findFlag, { $set: newValue })
+      .then(docs => ({
+        state: docs.n === 1 && docs.nModified === 1 && docs.ok === 1,
+        time: new Date().toLocaleString(),
+        data: docs,
+        msg: docs.n === 1 && docs.nModified === 1 && docs.ok === 1 ? '爬虫配置更新成功' : '爬虫配置更新失败'
+      }))
+      .catch((err) => ({
+        state: false,
+        time: new Date().toLocaleString(),
+        data: err,
+        msg: '爬虫配置更新失败'
+      }))
+  }
 
-/**
- * 删除配置
- * @param {object} findFlag - 根据传入的对象进行查找
- */
-Crawl.delete = findFlag => {
-  return collection.remove(findFlag)
-    .then(
-      () => {
-        return collection.find(findFlag).then(docs => ({
-          state: docs.length === 0,
-          time: new Date().toLocaleString(),
-          data: docs.length > 0 ? '爬虫配置删除失败' : '爬虫配置删除成功',
-          msg: docs.length > 0 ? '爬虫配置删除失败' : '爬虫配置删除成功'
-        })).catch(err => err)
-      }
-    )
-    .catch(err => ({
-      state: false,
-      time: new Date().toLocaleString(),
-      data: err,
-      msg: '爬虫配置删除失败'
-    }))
+  /**
+   * 删除配置
+   * @param {object} findFlag - 根据传入的对象进行查找
+   */
+  static delete (findFlag) {
+    return collection.remove(findFlag)
+      .then(
+        () => {
+          return collection.find(findFlag).then(docs => ({
+            state: docs.length === 0,
+            time: new Date().toLocaleString(),
+            data: docs.length > 0 ? '爬虫配置删除失败' : '爬虫配置删除成功',
+            msg: docs.length > 0 ? '爬虫配置删除失败' : '爬虫配置删除成功'
+          })).catch(err => err)
+        }
+      )
+      .catch(err => ({
+        state: false,
+        time: new Date().toLocaleString(),
+        data: err,
+        msg: '爬虫配置删除失败'
+      }))
+  }
 }
 
 module.exports = Crawl
