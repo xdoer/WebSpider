@@ -10,6 +10,7 @@ const cheerio = require('cheerio')
 const { URL } = require('url')
 const { _debug } = require('../utils')
 const { CRAWL: { HEADER } } = require('../config')
+const { VM } = require('vm2')
 require('superagent-charset')(superagent)
 require('superagent-proxy')(superagent)
 
@@ -23,10 +24,12 @@ module.exports = async ({ url, tags, tagNum, depth = 1, form, charset = 'utf-8',
       let tag = null // 解析后的标签选择器
       let state = true // fn回调函数返回控制
       let errMsg = '' // 错误信息
-
+      let vm = new VM({
+        sandbox: { $ }
+      })
       // 验证用户输入，放在路由那里
       try {
-        tag = eval(tags[tagNum])     // eslint-disable-line
+        tag = vm.run(tags[tagNum])     // eslint-disable-line
       } catch (e) {
         fn(`标签选择器解析失败,失败详情 ${e}`)
         return
@@ -48,10 +51,12 @@ module.exports = async ({ url, tags, tagNum, depth = 1, form, charset = 'utf-8',
 
           let tempKey = Object.keys(form)
           let tempValue = Object.values(form)
-
+          let vm2 = new VM({
+            sandbox: { $element }
+          })
           tempKey.forEach((key, idx) => {
             try {
-              tempResult[key] = eval(tempValue[idx]) // eslint-disable-line
+              tempResult[key] = vm2.run(tempValue[idx])
             } catch (e) {
               state = false
               errMsg = e.toString()
