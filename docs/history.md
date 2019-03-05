@@ -7,7 +7,9 @@
 #### develop分支主要是尝试一些新功能新特性，测试稳定后会合并发布到master分支
 
 ## 3.2.0/2019-03-05
->* 后端用户输入解析由 eval 换成更安全的 vm2 库
+>* 用户输入解析由 eval 换成更安全的 [vm2](https://github.com/patriksimek/vm2) 库
+
+相关文章:[Eval no more: a journey through NodeJS' VM module, VM2 and Expression Language](https://odino.org/eval-no-more-understanding-vm-vm2-nodejs/)
 
 ## 3.1.0/2019-03-04
 >* 前端PWA改造
