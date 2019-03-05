@@ -21,6 +21,7 @@
     "koa-router": "^7.4.0",
     "koa-session": "^5.10.0",
     "koa-static": "^5.0.0",
+    "monk": "^6.0.6",
     "redis": "^2.8.0",
     "superagent": "^4.0.0",
     "superagent-charset": "^1.2.0",
