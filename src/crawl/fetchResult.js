@@ -40,15 +40,6 @@ module.exports = async ({ url, tags, tagNum, depth = 1, form, charset = 'utf-8',
         // 根据抓取深度与标签下标的关系判断当前是要获取进入下一页的a标签，还是要获取数据
         if (depth === tagNum + 1) {
           let tempResult = {}
-          /**
-           * 单纯描述数据其实可以用map数据结构
-           * const _form = new Map(Object.entries(form))
-           * let tempKey = _form.keys()
-           * let tempValue = _form.values()
-           * 参考:http://es6.ruanyifeng.com/#docs/style#Map-%E7%BB%93%E6%9E%84
-           * 不过看起来绕弯弯，不如Object.keys()直接
-           */
-
           let tempKey = Object.keys(form)
           let tempValue = Object.values(form)
           let vm2 = new VM({
