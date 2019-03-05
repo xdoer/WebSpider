@@ -17,7 +17,14 @@ const regList = [
   /superagent/i,
   /cheerio/i,
   /_debug/i,
-  /[;|!|]/i
+  /[;|!|=]/i,
+  /eval/i,
+  /process/i,
+  /JSON/i,
+  /while/i,
+  /Object/i,
+  /Function/i,
+  /with/i
 ]
 
 const xssList = [
