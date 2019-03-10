@@ -150,7 +150,7 @@ router
 
     // API调用统计信息
     if (STATISTICS) {
-      _statistics({ path: ctx.request.header.host + ctx.request.url, cid, time })
+      _statistics({ path: ctx.request.url, cid, time })
     }
 
     // 启用API调用频率限制
