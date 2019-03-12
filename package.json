@@ -1,6 +1,10 @@
 {
   "name": "WebSpider",
+<<<<<<< HEAD
   "version": "3.1.0",
+=======
+  "version": "3.0.0",
+>>>>>>> 144c57ba0725cc05490b2bb80acd61c07ef50922
   "description": "a online web crawl",
   "private": true,
   "scripts": {
