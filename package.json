@@ -1,6 +1,6 @@
 {
-  "name": "crawl",
-  "version": "2.0.0",
+  "name": "WebSpider",
+  "version": "3.0.0",
   "description": "a online web crawl",
   "private": true,
   "scripts": {
