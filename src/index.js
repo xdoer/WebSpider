@@ -8,7 +8,7 @@ const bodyParser = require('koa-bodyparser')
 const path = require('path')
 const app = new Koa()
 
-const { userRouter, crawlRouter, proxyRouter, statisticsRouter } = require('./router')
+const { userRouter, crawlRouter, proxyRouter, statisticsRouter, mdRouter } = require('./router')
 const { SESSION } = require('./config')
 
 /** 配置静态服务根目录 */
@@ -35,19 +35,20 @@ app.use(bodyParser())
  * 允许任意来源的访问,以调用生成的配置接口
  * 如果要前端面板文件需要由 Nginx、Tomcat等分发，则取消下面配置响应头的注释
  */
-// app.use(async (ctx, next) => {
-//   ctx.set({
-//     'Access-Control-Allow-Credentials': true,
-//     'Access-Control-Allow-Origin': ctx.request.header.origin,
-//     'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,DELETE',
-//   })
-//   await next()
-// })
+app.use(async (ctx, next) => {
+  ctx.set({
+    'Access-Control-Allow-Credentials': true,
+    'Access-Control-Allow-Origin': ctx.request.header.origin,
+    'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,DELETE'
+  })
+  await next()
+})
 
 /** 应用路由 */
 app.use(userRouter.routes()).use(userRouter.allowedMethods())
 app.use(crawlRouter.routes()).use(crawlRouter.allowedMethods())
 app.use(proxyRouter.routes()).use(userRouter.allowedMethods())
+app.use(mdRouter.routes()).use(mdRouter.allowedMethods())
 app.use(statisticsRouter.routes()).use(statisticsRouter.allowedMethods())
 
 module.exports = app
