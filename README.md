@@ -1,5 +1,9 @@
 # WebSpider
 
+[![Badge](https://img.shields.io/badge/link-996.icu-%23FF4D5B.svg?style=flat-square)](https://996.icu/#/en_US)
+[![Badge](https://img.shields.io/github/license/luckyhh/WebSpider.svg?style=flat-square)](LICENSE)
+
+
 基于NodeJS的在线爬虫系统。支持提供在线数据API。
 
 1、当你想在自己的网站添加一个小的新闻模块时，你可以利用WebSpider爬虫爬取指定网站的数据，然后在后端或者前端请求数据接口，再将获得的数据构造到你的网页上。
@@ -9,6 +13,7 @@
 ...
 
 由此,WebSpider诞生了。
+
 
 
 ## 内容目录
