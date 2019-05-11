@@ -2,12 +2,12 @@
  * 测试函数
  */
 /* eslint-disable */
-const { _splice, _statistics, _filter: { filterEval, filterUrl }, _time } = require('../src/utils')
+const { _splice, _statistics, _filter: { isInvalidEval, isInvalidUrl }, _time } = require('../src/utils')
 const { expect } = require('chai')
 
 // 测试多为数组转化为一维数组
 describe('Utils文件夹中模块测试', function () {
-  //数组转换
+  //数组转换 
   describe('Splice', function () {
     describe('多维数组转化为一维数组', function () {
       it('应该返回一维数组', function () {
@@ -42,12 +42,15 @@ describe('Utils文件夹中模块测试', function () {
   describe('Filter', function () {
     describe('爬虫模块整合用户输入需要进行关键字过滤', function () {
       it('应该返回 false', function () {
-        expect(filterEval('const')).to.not.be.ok
+        expect(isInvalidEval('const')).to.not.be.ok
       })
     })
     describe('对用户输入的代理地址有效性检测', function () {
-      it('应该返回 false', function () {
-        expect(filterUrl('http://123.234.345:123')).to.not.be.ok
+      it('应该返回 true', function () {
+        /**
+         * 123.234.345.456不是正确的IP地址
+         */
+        expect(isInvalidUrl('http://123.234.345.456:123')).to.be.ok
       })
     })
   })
