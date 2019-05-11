@@ -232,7 +232,7 @@ router
     }
     page = Number.parseInt(page)
     pageSize = Number.parseInt(pageSize)
-    ctx.body = await Crawl.get({ uid: ctx.session.user.uid }, { fields: { config: 1, interval: 1, tag: 1, description: 1, author: 1, cid: 1, permission: 1 }, sort: { time: -1 }, skip: pageSize * page, limit: pageSize })
+    ctx.body = await Crawl.get({ uid: ctx.session.user.uid }, { fields: { config: 1, interval: 1, tag: 1, description: 1, author: 1, cid: 1, permission: 1 }, sort: { time: -1 }, limit: pageSize, skip: pageSize * page })
   })
   /**
    * 更新配置
