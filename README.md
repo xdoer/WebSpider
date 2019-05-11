@@ -433,7 +433,7 @@ https://spider.docmobile.cn/
 - [x] API调用统计(按时间统计)
 - [x] 定义请求头
 - [x] 添加HTTP代理
-- [x] JSONP调用支持
+- [x] JSONP调用支持(v3版本移除)
 - [x] 前后端分离,[WebSpiderPanel](https://github.com/LuckyHH/WebSpiderPanel)
 - [ ] 超级用户后台管理面板
 - [x] 普通用户信息管理，查看自己API调用情况
