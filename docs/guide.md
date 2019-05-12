@@ -76,8 +76,8 @@ CNode的分页网址
 
 ```
 {
-    "name":"$element.find('.c-9 .ml-20 a').text()",
-    "age":"$element.children('.c-9').next().text()"
+    "name":"$element.find('.c-9 .ml-20 a').text().replace(/[\\n\\t\\s]/g,'')",
+    "age":"$element.children('.c-9').next().text().replace(/[\\n\\t\\s]/g,'')"
 }
 ```
 
@@ -88,7 +88,8 @@ CNode的分页网址
 键为name的值指 "选择器"筛选出的元素下的类名为c-9的元素下的类名ml-20下的a元素中的文本
 
 键为age的值指 "选择器"筛选出的元素下的类名为c-9的元素下一个元素的文本内容
- 
+
+`replace(/[\\n\\t\\s]/g,'')`中的replace()是JavaScript原生处理字符串的方法。这里用来去除结果中的换行符、制表符和空格。
 
 ***
 
