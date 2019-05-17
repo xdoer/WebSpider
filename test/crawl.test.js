@@ -5,7 +5,7 @@
 /* eslint-disable */
 const { expect } = require('chai')
 const crawl = require('../src/crawl')
-const { newspaper } = require('../src/data/config')
+const { newspaper } = require('../src/data/example')
 
 describe('爬虫测试', function () {
   it('返回值 state 字段应该为 true', async function () {
