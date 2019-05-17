@@ -2,35 +2,12 @@
  * 过滤用户输入
  */
 
-const regList = [
-  /import\s/i,
-  /require/i,
-  /export\s/i,
-  /var\s/i,
-  /const\s/i,
-  /let\s/i,
-  /promise/i,
-  /console/i,
-  /eval/i,
-  /new\s/i,
-  /function/i,
-  /superagent/i,
-  /cheerio/i,
-  /_debug/i,
-  /[;|!|=]/i,
-  /eval/i,
-  /process/i,
-  /JSON/i,
-  /while/i,
-  /Object/i,
-  /Function/i,
-  /with/i
-]
+const regList = []
 
 const xssList = [
   /document/i,
   /script/i,
-  /[;|!|]/i
+  /[;!=]/i
 ]
 
 module.exports = {
