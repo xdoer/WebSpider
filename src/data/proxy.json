@@ -1,0 +1,92 @@
+{
+  "proxyXiCi": {
+    "urls": [
+      "http://www.xicidaili.com/nn/1",
+      "http://www.xicidaili.com/nn/2",
+      "http://www.xicidaili.com/nn/3",
+      "http://www.xicidaili.com/nn/4",
+      "http://www.xicidaili.com/nn/5",
+      "http://www.xicidaili.com/nn/6",
+      "http://www.xicidaili.com/nn/7"
+    ],
+    "tags": ["$(\"#ip_list tr\").not($(\"#ip_list tr\").eq(0))"],
+    "form": {
+      "ip": "$element.children('td').eq(1).text()",
+      "port": "$element.children('td').eq(2).text()"
+    },
+    "depth": 1
+  },
+  "proxyFreeList": {
+    "urls": ["https://free-proxy-list.net/"],
+      "tags": ["$(\"#proxylisttable tr\").not($(\"#proxylisttable tr\").eq(0)).not($(\"proxylisttable tr\").eq($(\"#proxylisttable tr\").length-1))"],
+      "form": {
+        "ip": "$element.children('td').eq(0).text()",
+        "port": "$element.children('td').eq(1).text()"
+      },
+    "depth": 1
+  },
+  "proxyQuick": {
+    "urls": [
+      "https://www.kuaidaili.com/free/inha/1/",
+      "https://www.kuaidaili.com/free/inha/2/",
+      "https://www.kuaidaili.com/free/inha/3/",
+      "https://www.kuaidaili.com/free/inha/4/",
+      "https://www.kuaidaili.com/free/inha/5/",
+      "https://www.kuaidaili.com/free/inha/6/",
+      "https://www.kuaidaili.com/free/inha/7/"
+    ],
+    "tags": ["$(\"#list tr\")"],
+    "form": {
+      "ip": "$element.find('td[data-title=\"IP\"]').text()",
+      "port": "$element.find('td[data-title=\"PORT\"]').text()"
+    },
+    "depth": 1
+  },
+  "proxyChick": {
+    "urls": ["http://www.shenjidaili.com/open/"],
+    "tags": ["$(\"#pills-stable_https tr\").not($(\"#pills-stable_https tr\").first())"],
+    "form": {
+      "ip": "$element.find('td').first().text().slice(0,$element.find('td').first().text().indexOf(\":\"))",
+      "port": "$element.find('td').first().text().slice($element.find('td').first().text().indexOf(\":\")+1)"
+    },
+    "depth": 1
+  },
+  "proxy89Ip": {
+    "urls": [
+      "http://www.89ip.cn/index_1.html",
+      "http://www.89ip.cn/index_2.html",
+      "http://www.89ip.cn/index_3.html",
+      "http://www.89ip.cn/index_4.html",
+      "http://www.89ip.cn/index_5.html",
+      "http://www.89ip.cn/index_6.html",
+      "http://www.89ip.cn/index_7.html"
+    ],
+    "tags": [
+      "$(\".layui-table tbody tr\")"
+    ],
+    "form": {
+      "ip": "$element.find('td').eq(0).text().replace(/[\\n\\t\\s]/g,'')",
+      "port": "$element.find('td').eq(1).text().replace(/[\\n\\t\\s]/g,'')"
+    },
+    "depth": 1    
+  },
+  "proxyIp3366": {
+    "urls": [
+      "http://www.ip3366.net/?page=1",
+      "http://www.ip3366.net/?page=2",
+      "http://www.ip3366.net/?page=3",
+      "http://www.ip3366.net/?page=4",
+      "http://www.ip3366.net/?page=5",
+      "http://www.ip3366.net/?page=6",
+      "http://www.ip3366.net/?page=7"
+    ],
+    "tags": [
+      "$(\"#list tbody tr\")"
+    ],
+    "form": {
+      "ip": "$element.find('td').eq(0).text()",
+      "port": "$element.find('td').eq(1).text()"
+    },
+    "depth": 1
+  }
+}
