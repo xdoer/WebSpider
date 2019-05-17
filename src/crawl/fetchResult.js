@@ -29,9 +29,10 @@ module.exports = async ({ url, tags, tagNum, depth = 1, form, charset = 'utf-8',
       })
       // 验证用户输入，放在路由那里
       try {
-        tag = vm.run(tags[tagNum])     // eslint-disable-line
+        tag = vm.run(tags[tagNum])
+        if (!tag) { throw new Error('标签选择器解析失败') }
       } catch (e) {
-        fn(`标签选择器解析失败,失败详情 ${e}`)
+        fn(e)
         return
       }
 
@@ -47,7 +48,12 @@ module.exports = async ({ url, tags, tagNum, depth = 1, form, charset = 'utf-8',
           })
           tempKey.forEach((key, idx) => {
             try {
-              tempResult[key] = vm2.run(tempValue[idx])
+              const a = vm2.run(tempValue[idx])
+              if (a) {
+                tempResult[key] = a
+              } else {
+                throw new Error('选择器解析失败')
+              }
             } catch (e) {
               state = false
               errMsg = e.toString()
