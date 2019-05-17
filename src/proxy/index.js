@@ -4,7 +4,7 @@
  */
 
 const { PROXY: { proxy, interval, timeout }, REDIS } = require('../config')
-const { proxyXiCi, proxyFreeList } = require('../data/config')
+const ProxyConfig = require('../data/proxy')
 const crawl = require('../crawl')
 const { _debug, _filter: { isInvalidUrl } } = require('../utils')
 const superagent = require('superagent')
@@ -17,61 +17,51 @@ const async = require('async')
 const writeProxies = async () => {
   // 初始化写入数据
   let proxies = []
-  let flag = true
 
-  // 存在proxyFreeList相关配置
-  if (proxyFreeList) {
-    const list = await crawl(proxyFreeList)
-    if (list.state) {
-      proxies = proxies.concat(list.data)
-      flag = false
-    } else {
-      _debug(`ProxyFreeList代理获取失败,失败详情:${list.data}`, true)
-    }
-  }
+  const task = Object.keys(ProxyConfig).map(n => new Promise((resolve, reject) => {
+    resolve(crawl(ProxyConfig[n]))
+  }))
 
-  // 如果存在西刺代理的配置，则抓取西刺代理.
-  if (proxyXiCi && flag) {
-    const xici = await crawl(proxyXiCi)
-    if (xici.state) {
-      proxies = proxies.concat(xici.data)
-    } else {
-      _debug(`西刺代理获取失败,失败详情:${xici.data}`)
-    }
-  }
-
-  // 检测可用代理
-  proxies = await new Promise(function (resolve, reject) {
-    async.mapLimit(proxies, 100, (proxy, fn) => {
-      const _proxy = `http://${proxy.ip}:${proxy.port}`
-      superagent.get('http://ip-api.com/json').timeout(timeout).proxy(_proxy).buffer(true).end((err, res) => {
-        if (err) {
-          fn(null, '')
-        } else {
-          if (res.body['status'] === 'success') {
-            fn(null, _proxy)
-          } else {
-            fn(null, '')
-          }
-        }
-      })
-    }, (err, res) => {
-      if (err) {
-        _debug(`代理检测出错，错误详情${err}`)
+  Promise.all(task).then(async v => {
+    v.forEach(n => {
+      if (n.state) {
+        proxies = proxies.concat(n.data)
       }
-      resolve([...new Set(res)].filter(n => n !== '' || !isInvalidUrl(n)))
     })
+    // 检测可用代理
+    proxies = await new Promise(function (resolve, reject) {
+      async.mapLimit(proxies, 100, (proxy, fn) => {
+        const _proxy = `http://${proxy.ip}:${proxy.port}`
+        superagent.get('http://ip-api.com/json').timeout(timeout).proxy(_proxy).buffer(true).end((err, res) => {
+          if (err) {
+            fn(null, '')
+          } else {
+            if (res.body['status'] === 'success') {
+              fn(null, _proxy)
+            } else {
+              fn(null, '')
+            }
+          }
+        })
+      }, (err, res) => {
+        if (err) {
+          _debug(`代理检测出错，错误详情${err}`)
+        }
+        resolve([...new Set(res)].filter(n => n !== '' || !isInvalidUrl(n)))
+      })
+    })
+    // 整合直接写在配置文件中的代理
+    proxies = proxies.concat(proxy)
+
+    try {
+      await REDIS.setAsync('proxy', JSON.stringify(proxies))
+      REDIS.expire('proxy', interval)
+    } catch (e) {
+      _debug(`Redis配置代理失败,${e}`)
+    }
+  }).catch(e => {
+    _debug(`代理获取失败,${e}`)
   })
-
-  // 整合直接写在配置文件中的代理
-  proxies = proxies.concat(proxy)
-
-  try {
-    await REDIS.setAsync('proxy', JSON.stringify(proxies))
-    REDIS.expire('proxy', interval)
-  } catch (e) {
-    _debug(`Redis配置代理失败,${e}`)
-  }
 }
 
 /**
