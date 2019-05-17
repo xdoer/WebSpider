@@ -172,7 +172,7 @@ attr()选择的是目标元素标签中的某个属性值。需要填写参数�
 
 即抓取数据是否需要使用HTTP代理。有3种模式，内置代理,无代理与自定义代理。
 
-内置代理使用[西刺代理](http://xicidaili.net/)或[FreeProxyList](https://free-proxy-list.net/)可用的代理地址发出请求。
+内置代理使用[西刺代理](http://xicidaili.net/)、[FreeProxyList](https://free-proxy-list.net/)等众多个网站的可用代理。
 
 自定义代理模式需要用户自己填写可用代理。
 
