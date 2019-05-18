@@ -22,7 +22,7 @@ const writeProxies = async () => {
     resolve(crawl(ProxyConfig[n]))
   }))
 
-  Promise.all(task).then(async v => {
+  await Promise.all(task).then(async v => {
     v.forEach(n => {
       if (n.state) {
         proxies = proxies.concat(n.data)
