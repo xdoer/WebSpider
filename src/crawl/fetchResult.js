@@ -14,8 +14,11 @@ const { VM } = require('vm2')
 require('superagent-charset')(superagent)
 require('superagent-proxy')(superagent)
 
+let Cookie
+
 module.exports = async ({ url, tags, tagNum, depth = 1, form, charset = 'utf-8', proxy, fn }) => {
   const bound = (err, res) => {
+    Cookie = res.header['set-cookie'].join(';')
     if (err) {
       fn(err)
     } else {
@@ -82,11 +85,11 @@ module.exports = async ({ url, tags, tagNum, depth = 1, form, charset = 'utf-8',
   }
 
   if (proxy) {
-    superagent.get(url).set(HEADER).proxy(proxy).charset(charset).buffer(true).end((err, res) => {
+    superagent.get(url).set({ ...HEADER, Cookie }).proxy(proxy).charset(charset).buffer(true).end((err, res) => {
       bound(err, res)
     })
   } else {
-    superagent.get(url).set(HEADER).charset(charset).buffer(true).end((err, res) => {
+    superagent.get(url).set({ ...HEADER, Cookie }).charset(charset).buffer(true).end((err, res) => {
       bound(err, res)
     })
   }
