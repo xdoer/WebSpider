@@ -2,6 +2,14 @@
 
 [![Badge](https://img.shields.io/github/license/luckyhh/WebSpider.svg?style=flat-square)](LICENSE)
 
+## 2019-09-18 更新
+服务器到期, Web 服务已关闭
+
+[爬虫模块](./src/crawl/index.js)可以单独调用。调用示例请查看 [crawl.test.js](./test/crawl.test.js)。或者 [HttpProxy](https://github.com/LuckyHH/HttpProxy)项目
+
+运行平台: Linux、 MacOS ... Windows没测试
+
+----------
 
 基于NodeJS的在线爬虫系统。支持提供在线数据API。
 
@@ -411,10 +419,7 @@ router.get('/douban/movie', function(req, res, next) {
 
 ## 示例配置参考
 
-> * [WebSpider参考配置](https://docmobile.cn/artical_detiail/luckyhh/1528369921460)
-
-> * [基于WebSpider的在线新闻模块开发](https://docmobile.cn/artical_detiail/luckyhh/1528989508215)
-
+> * [WebSpider参考配置](https://hanblog.herokuapp.com/artical_detiail/luckyhh/1528369921460)
 
 ## 更新日志
 
