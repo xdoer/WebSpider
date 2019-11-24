@@ -24,7 +24,8 @@ const regList = [
   /while/i,
   /Object/i,
   /Function/i,
-  /with/i
+  /with/i,
+  /__proto__/i
 ]
 
 const xssList = [
