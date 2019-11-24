@@ -2,10 +2,11 @@
 
 [![Badge](https://img.shields.io/github/license/luckyhh/WebSpider.svg?style=flat-square)](LICENSE)
 
-## 2019-09-18 更新
-服务器到期, Web 服务已关闭
+## 2019/11/24更新
 
-[爬虫模块](./src/crawl/index.js)可以单独调用。调用示例请查看 [crawl.test.js](./test/crawl.test.js)。或者 [HttpProxy](https://github.com/LuckyHH/HttpProxy)项目
+[演示爬虫](http://www.aiyou.life/spider)目前部署在了一块树莓派上，树莓派性能较低，请酌情测试使用
+
+[爬虫模块](./src/crawl/index.js)可以单独调用。调用示例请查看 [crawl.test.js](./test/crawl.test.js)。或者 [HttpProxy](https://github.com/LuckyHH/HttpProxy)项目。数据库使用的是mlab提供的免费的远程数据库，速度较慢，请耐性等待。
 
 运行平台: Linux、 MacOS ... Windows没测试
 
@@ -20,8 +21,6 @@
 ...
 
 由此,WebSpider诞生了。
-
-
 
 ## 内容目录
 
@@ -54,33 +53,39 @@
 
 ## 特性
 
-> * 简单、方便。只要掌握简单的网页知识，即可利用WebSpider在线爬虫系统，进行简单的配置之后，可进行数据抓取预览。
+>*简单、方便。只要掌握简单的网页知识，即可利用WebSpider在线爬虫系统，进行简单的配置之后，可进行数据抓取预览。
+>*功能强大。支持抓取预览，定制输出，生成API，API管理，查看分享，登录注册等功能。
+>*响应速度快。抓取结果保存在数据库中，根据用户配置更新响应数据。
 
-> * 功能强大。支持抓取预览，定制输出，生成API，API管理，查看分享，登录注册等功能。
+## 原理
 
-> * 响应速度快。抓取结果保存在数据库中，根据用户配置更新响应数据。
-
+该爬虫为了满足通用性(即可通过页面配置就可以抓取各种各样的网站)),因而原理相对简单,就是下载HTML网页进行分析。分析库使用了采用JQuery核心库的cheerio.通过标签选择器和属性选择器即可获取数据.这样的局限性在于无法抓取Ajax异步获取的数据。但考虑到当今互联网上还有大部分Web应用没有过度到现代应用架构，因而该爬虫还是有很大的实用价值。
 
 ## 本地测试
+
 1、安装Nodejs,MongoDB,Git,Redis
 
 2、保证程序有写文件权限
 
 3、运行代码
-```
+
+```bash
 git clone https://github.com/LuckyHH/WebSpider.git
 cd WebSpider
 npm install
 ```
 
-4、修改配置文件(src/config)-自定义启动端口，数据库名，Redis等
+4、启动Redis、MongoDB
 
-5、运行`npm start`启动项目
+5、修改配置文件(src/config)-自定义启动端口，数据库名，Redis等
 
-6，打开```http://localhost:3000```
+6、运行`npm start`启动项目
+
+7，打开```http://localhost:3000```
 
 ## 项目目录
-```
+
+```bash
 |---docs 模块说明文档
 |    |---env.md 环境说明
 |    |---issues.md 相关问题说明
@@ -143,6 +148,7 @@ npm install
 ```
 
 ## 核心代码
+
 ```javascript
 const Koa = require("koa");
 const superagent = require("superagent");
@@ -215,7 +221,6 @@ CNode的分页网址
 
 ```https://cnodejs.org/?tab=good&page=*```
 
-
 ### 6.选择器
 
 选择器用来指出数据所在的位置，配合"输出格式"即可获得目标数据。填写需要用户具有基本的前端知识。
@@ -223,9 +228,7 @@ CNode的分页网址
 这里为了描述方便，将标签选择器分为两种，一种是a标签选择器与数据标签选择器。(当然，如果你想要的数据在a标签中，那么a标签选择器就是数据标签选择器)
 
 > 当抓取深度为1，则一级选择器中填写数据选择器即可。
-
 > 当抓取深度为2，则一级选择器中填写到达第二层页面的a标签选择器，二级选择器填写数据标签选择器。
-
 > 当抓取深度为3，则一级选择器中填写到达第二层页面的a标签选择器，二级选择器中填写到达第三层页面的a标签选择器，三级选择器填写数据选择器即可。
 
 填写示例:
@@ -253,7 +256,7 @@ CNode的分页网址
 
 这里需要写成JSON格式，参考写法如下：
 
-```
+```json
 {
     "name":"$element.find('.c-9 .ml-20 a').text()",
     "age":"$element.children('.c-9').next().text()"
@@ -267,9 +270,6 @@ CNode的分页网址
 键为name的值指 "选择器"筛选出的元素下的类名为c-9的元素下的类名ml-20下的a元素中的文本
 
 键为age的值指 "选择器"筛选出的元素下的类名为c-9的元素下一个元素的文本内容
- 
-
-***
 
 值得注意的是，当你需要的数据种类只有1种，你完全可以在"选择器"中填写标签选择器时，直接将标签定位到目标元素，在"输出格式"中，填写属性选择器即可。
 
@@ -286,7 +286,8 @@ CNode的分页网址
 二级选择器:`$(".topic .content .c-9 .ml-20 a")`
 
 '输出格式'可以这样写
-```
+
+```json
 {
     "name":"$element.text()"
 }
@@ -301,7 +302,8 @@ CNode的分页网址
 二级选择器:`$(".topic").find('.content .c-9 .ml-20 a')`
 
 '输出格式':
-```
+
+```json
 {
     "name":"$element.text()"
 }
@@ -316,7 +318,8 @@ CNode的分页网址
 二级选择器:`$(".topic")`
 
 '输出格式':
-```
+
+```json
 {
     "name":"$element.find('.content .c-9 .ml-20 a').text()",
 }
@@ -331,12 +334,12 @@ CNode的分页网址
 二级选择器:`$("body")`
 
 '输出格式':
-```
+
+```json
 {
     "name":"$element.find('.topic .content .c-9 .ml-20 a').text()"
 }
 ```
-
 
 常用的属性选择器有text(),html(),attr()这三种
 
@@ -387,17 +390,21 @@ msg备注
 ***注意:在点击"生成API"之后，在进行API"编辑"操作调整"更新间隔"之前，一定要到"管理面板"中，点击一次生成的API链接完成抓取数据的初始化。否则调用API返回结果永远为空。补救措施:当发现返回结果为空，可再次进行API“编辑”操作，将"更新间隔"调整为0，点击API链接初始化一次数据，初始化成功之后即可调整"更新间隔"***
 
 ### 12.标签(后台管理配置项)
+
 为了方便用户找到某一类的API，添加标签功能
 
 ### 13.开放权限(后台管理配置项)
+
 控制是否将API共享。API权限开放后，即可在"API Store"面板看到该API信息
 
 ### 14.描述信息(后台管理配置项)
+
 API描述信息。
 
 ## 数据接口调用示例
 
 Node.js后端
+
 ```javascript
 const express = require('express');
 const axios = require("axios");
@@ -415,23 +422,27 @@ router.get('/douban/movie', function(req, res, next) {
     });
 });
 ```
+
 ***注意: 程序后台对API调用频率进行限制，示例为了方便直接将API链接请求结果构造到了模板中，实际调用时，请将请求结果保存到redis或数据库中，否则会造成数据响应失败的情况***
 
 ## 示例配置参考
 
-> * [WebSpider参考配置](https://hanblog.herokuapp.com/artical_detiail/luckyhh/1528369921460)
+>*[WebSpider参考配置](https://hanblog.herokuapp.com/artical_detiail/luckyhh/1528369921460)
 
 ## 更新日志
 
 [WebSpider更新日志](/docs/history.md)
 
 ## 注意
-```
+
+```bash
 https://spider.docmobile.cn/
 ```
+
 为预览地址，不推荐使用到实际项目中。由此带来的损失，由用户自行承担
 
 ## TODO
+
 - [x] 对GBK网页格式的抓取支持
 - [x] 支持模式选择，可抓取分页列表
 - [x] API调用频率限制
