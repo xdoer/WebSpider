@@ -1,7 +1,7 @@
 const monk = require('monk')
-const { DB: { url } } = require('../config')
+const { DB: { url, connectOption } } = require('../config')
 const _time = require('../utils/time')
-const db = monk(url)
+const db = monk(url, connectOption)
 const collection = db.get('statistics')
 
 /**

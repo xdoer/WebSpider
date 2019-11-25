@@ -6,5 +6,9 @@
  */
 module.exports = {
   db: 'crawlProd',
-  url: 'localhost:27017/crawlProd'
+  url: 'localhost:27017/crawlProd',
+  connectOption: {
+    reconnectTries: Number.MAX_VALUE,
+    reconnectInterval: 1000
+  }
 }
