@@ -3,8 +3,8 @@
  */
 
 const monk = require('monk')
-const { DB: { url } } = require('../config')
-const db = monk(url)
+const { DB: { url, connectOption } } = require('../config')
+const db = monk(url, connectOption)
 const collection = db.get('crawl')
 
 /**
