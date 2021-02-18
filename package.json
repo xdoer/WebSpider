@@ -2,7 +2,6 @@
   "name": "WebSpider",
   "version": "3.1.0",
   "description": "a online web crawl",
-  "private": true,
   "scripts": {
     "start": "NODE_ENV=dev node ./app.js",
     "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha -t 10000",
@@ -19,10 +18,7 @@
     "koa": "^2.6.2",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
-    "koa-session": "^5.10.0",
     "koa-static": "^5.0.0",
-    "monk": "^6.0.6",
-    "redis": "^2.8.0",
     "superagent": "^4.0.0",
     "superagent-charset": "^1.2.0",
     "superagent-proxy": "^2.0.0",
@@ -30,7 +26,6 @@
     "vm2": "^3.6.10"
   },
   "devDependencies": {
-    "bluebird": "^3.5.3",
     "chai": "^4.2.0",
     "eslint": "^5.10.0",
     "eslint-config-standard": "^12.0.0",

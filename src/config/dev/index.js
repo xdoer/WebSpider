@@ -13,12 +13,6 @@
 
 module.exports = {
   PORT: process.env.PORT || 3000,
+  CRAWL: require("./crawl"),
   DEBUG: true,
-  LOG: false,
-  STATISTICS: true,
-  API: require('./api'),
-  DB: require('./db'),
-  SESSION: require('./session'),
-  PROXY: require('./proxy'),
-  CRAWL: require('./crawl')
-}
+};

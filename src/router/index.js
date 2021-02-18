@@ -3,9 +3,5 @@
  */
 
 module.exports = {
-  userRouter: require('./user'),
-  crawlRouter: require('./crawl'),
-  proxyRouter: require('./proxy'),
-  statisticsRouter: require('./statistics'),
-  mdRouter: require('./md')
-}
+  crawlRouter: require("./crawl"),
+};
