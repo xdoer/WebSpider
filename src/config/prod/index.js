@@ -14,6 +14,7 @@
 
 module.exports = {
   PORT: process.env.PORT || 4000,
-  CRAWL: require("./crawl"),
+  CRAWL: require('./crawl'),
   DEBUG: false,
-};
+  DB: require('./db'),
+}

@@ -1,13 +1,15 @@
 /**
  * 主文件
  */
-const Koa = require("koa");
-const serve = require("koa-static");
-const bodyParser = require("koa-bodyparser");
-const path = require("path");
-const app = new Koa();
+const Koa = require('koa')
+const serve = require('koa-static')
+const bodyParser = require('koa-bodyparser')
+const session = require('koa-session')
+const path = require('path')
+const app = new Koa()
 
-const { crawlRouter } = require("./router");
+const { crawlRouter, userRouter, mdRouter } = require('./router')
+const { SESSION } = require('./config')
 
 /** 配置静态服务根目录 */
 // if (process.env.NODE_ENV === 'dev') {
@@ -18,16 +20,17 @@ const { crawlRouter } = require("./router");
 
 // 配置每30天更新一次缓存
 app.use(
-  serve(path.resolve(__dirname, "../static"), {
+  serve(path.resolve(__dirname, '../static'), {
     maxage: 1000 * 60 * 60 * 24 * 30,
   })
-);
+)
 
 /** 配置session */
-app.keys = ["some secret"];
+app.keys = ['some secret']
+app.use(session(SESSION, app))
 
 /** 配置Post解析 */
-app.use(bodyParser());
+app.use(bodyParser())
 
 /**
  * 解决跨域问题
@@ -36,14 +39,16 @@ app.use(bodyParser());
  */
 app.use(async (ctx, next) => {
   ctx.set({
-    "Access-Control-Allow-Credentials": true,
-    "Access-Control-Allow-Origin": ctx.request.header.origin,
-    "Access-Control-Allow-Methods": "OPTIONS,POST,GET,DELETE",
-  });
-  await next();
-});
+    'Access-Control-Allow-Credentials': true,
+    'Access-Control-Allow-Origin': ctx.request.header.origin,
+    'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,DELETE',
+  })
+  await next()
+})
 
 /** 应用路由 */
-app.use(crawlRouter.routes()).use(crawlRouter.allowedMethods());
+app.use(crawlRouter.routes()).use(crawlRouter.allowedMethods())
+app.use(userRouter.routes()).use(userRouter.allowedMethods())
+app.use(mdRouter.routes()).use(mdRouter.allowedMethods())
 
-module.exports = app;
+module.exports = app

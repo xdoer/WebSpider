@@ -3,5 +3,7 @@
  */
 
 module.exports = {
-  crawlRouter: require("./crawl"),
-};
+  crawlRouter: require('./crawl'),
+  userRouter: require('./user'),
+  mdRouter: require('./md'),
+}

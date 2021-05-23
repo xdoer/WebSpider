@@ -19,11 +19,13 @@
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
+    "koa-session": "^5.10.0",
     "superagent": "^4.0.0",
     "superagent-charset": "^1.2.0",
     "superagent-proxy": "^2.0.0",
     "uuid": "^3.3.2",
-    "vm2": "^3.6.10"
+    "vm2": "^3.6.10",
+    "monk": "^6.0.6"
   },
   "devDependencies": {
     "chai": "^4.2.0",

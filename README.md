@@ -2,6 +2,16 @@
 
 [![Badge](https://img.shields.io/github/license/luckyhh/WebSpider.svg?style=flat-square)](LICENSE)
 
+## 2021/05/23 更新
+
+[演示爬虫](https://webspiderr.herokuapp.com/)目前部署在 heroku 上，请酌情测试使用
+
+[爬虫模块](./src/crawl/index.js)可以单独调用。调用示例请查看 [crawl.test.js](./test/crawl.test.js)。或者 [HttpProxy](https://github.com/LuckyHH/HttpProxy)项目。数据库使用的是 mlab 提供的免费的远程数据库，速度较慢，请耐性等待。
+
+运行平台: Linux、 MacOS ... Windows 没测试
+
+---
+
 基于 NodeJS 的在线爬虫系统。支持提供在线数据 API。
 
 1、当你想在自己的网站添加一个小的新闻模块时，你可以利用 WebSpider 爬虫爬取指定网站的数据，然后在后端或者前端请求数据接口，再将获得的数据构造到你的网页上。
@@ -10,7 +20,7 @@
 
 ...
 
-由此，WebSpider 诞生了。
+由此,WebSpider 诞生了。
 
 ## 内容目录
 
@@ -44,35 +54,13 @@
 ## 特性
 
 > *简单、方便。只要掌握简单的网页知识，即可利用 WebSpider 在线爬虫系统，进行简单的配置之后，可进行数据抓取预览。
-> *功能强大。支持抓取预览，定制输出，生成 API，API 管理，查看分享，登录注册等功能。 响应速度快。抓取结果保存在数据库中，根据用户配置更新响应数据。
+> *功能强大。支持抓取预览，定制输出，生成 API，API 管理，查看分享，登录注册等功能。 \*响应速度快。抓取结果保存在数据库中，根据用户配置更新响应数据。
 
 ## 原理
 
 该爬虫为了满足通用性(即可通过页面配置就可以抓取各种各样的网站)),因而原理相对简单,就是下载 HTML 网页进行分析。分析库使用了采用 JQuery 核心库的 cheerio.通过标签选择器和属性选择器即可获取数据.这样的局限性在于无法抓取 Ajax 异步获取的数据。但考虑到当今互联网上还有大部分 Web 应用没有过度到现代应用架构，因而该爬虫还是有很大的实用价值。
 
 ## 本地测试
-
-为了减少用户成本，提供了'仅预览'和'全功能'两个版本。
-
-### 仅预览
-
-main 分支代码仅仅保留了预览功能
-
-1、安装 Nodejs
-
-2、运行代码
-
-```bash
-git clone https://github.com/LuckyHH/WebSpider.git
-cd WebSpider
-npm install
-```
-
-3、运行`npm start`启动项目
-
-4，打开`http://localhost:3000`
-
-### 全功能
 
 1、安装 Nodejs,MongoDB,Git,Redis
 
@@ -161,36 +149,36 @@ npm install
 ## 核心代码
 
 ```javascript
-const Koa = require("koa");
-const superagent = require("superagent");
-const cheerio = require("cheerio");
-const app = new Koa();
+const Koa = require('koa')
+const superagent = require('superagent')
+const cheerio = require('cheerio')
+const app = new Koa()
 
 app.use(async function (ctx, next) {
-  if (ctx.request.path == "/" && ctx.request.method == "GET") {
+  if (ctx.request.path == '/' && ctx.request.method == 'GET') {
     ctx.body = await new Promise((resolve, reject) => {
-      superagent.get("https://cnodejs.org/").end(function (err, _res) {
+      superagent.get('https://cnodejs.org/').end(function (err, _res) {
         if (err) {
-          reject(err);
+          reject(err)
         }
-        const $ = cheerio.load(_res.text);
+        const $ = cheerio.load(_res.text)
 
-        $(".topic_title").each(function (idx, element) {
-          var $element = $(element);
+        $('.topic_title').each(function (idx, element) {
+          var $element = $(element)
           items.push({
-            title: $element.attr("title"),
-            url: $element.attr("href"),
-          });
-        });
-        resolve(items);
-      });
-    });
+            title: $element.attr('title'),
+            url: $element.attr('href'),
+          })
+        })
+        resolve(items)
+      })
+    })
   } else {
-    next();
+    next()
   }
-});
+})
 
-app.listen(3000);
+app.listen(3000)
 ```
 
 ## 使用
@@ -415,35 +403,43 @@ API 描述信息。
 Node.js 后端
 
 ```javascript
-const express = require("express");
-const axios = require("axios");
-const router = express.Router();
+const express = require('express')
+const axios = require('axios')
+const router = express.Router()
 
-router.get("/douban/movie", function (req, res, next) {
+router.get('/douban/movie', function (req, res, next) {
   axios
-    .get("http://splider.docmobile.cn/interface?name=luckyhh&cid=1529046160624")
+    .get('http://splider.docmobile.cn/interface?name=luckyhh&cid=1529046160624')
     .then((_res) => {
       if (_res.data.state) {
-        res.render("douban", { title: "douban", content: _res.data.data });
+        res.render('douban', { title: 'douban', content: _res.data.data })
       } else {
-        res.send("请求失败");
+        res.send('请求失败')
       }
     })
     .catch((err) => {
-      console.error(err);
-    });
-});
+      console.error(err)
+    })
+})
 ```
 
 **_注意: 程序后台对 API 调用频率进行限制，示例为了方便直接将 API 链接请求结果构造到了模板中，实际调用时，请将请求结果保存到 redis 或数据库中，否则会造成数据响应失败的情况_**
 
 ## 示例配置参考
 
-> - [WebSpider 参考配置](https://hanblog.herokuapp.com/artical_detiail/luckyhh/1528369921460)
+> \*[WebSpider 参考配置](https://hanblog.herokuapp.com/artical_detiail/luckyhh/1528369921460)
 
 ## 更新日志
 
 [WebSpider 更新日志](/docs/history.md)
+
+## 注意
+
+```bash
+https://spider.docmobile.cn/
+```
+
+为预览地址，不推荐使用到实际项目中。由此带来的损失，由用户自行承担
 
 ## TODO
 
